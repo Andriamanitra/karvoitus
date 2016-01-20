@@ -13,8 +13,12 @@ TODO LIST:
 
 * piirtovuoro-loop:
 
-** piirrettävän sanan arvonta
-** piirtovuoroon asettaminen
-** aloitetaan piirtoaikatimer
-** jos sana arvataan aloitetaan alusta
-** jos kukaan ei arvannut oikein, piirtoaikatimerin loppuessa aloitetaan alusta
+  * piirrettävän sanan arvonta
+
+  * piirtovuoroon asettaminen
+
+  * aloitetaan piirtoaikatimer
+
+  * jos sana arvataan aloitetaan alusta
+  
+  * jos kukaan ei arvannut oikein, piirtoaikatimerin loppuessa aloitetaan alusta
