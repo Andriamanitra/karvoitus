@@ -54,6 +54,9 @@ io.on('connection', function(socket){
     socket.emit('draw', false);
     socket.emit('message', "** Now drawing: "+piirtaja);
   }
+  else {
+    socket.emit('message', "** The game is in ebin multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
+  }
   console.log(socket.username+' connected');
   io.emit('message', "** "+socket.username+" connected")
 
