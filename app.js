@@ -50,6 +50,10 @@ io.on('connection', function(socket){
   anoncount += 1;
   socket.emit('nick', socket.username);
   socket.emit('muodot', muodot);
+  if (piirtovuorot.length > 0) {
+    socket.emit('draw', false);
+    socket.emit('message', "** Now drawing: "+piirtaja);
+  }
   console.log(socket.username+' connected');
   io.emit('message', "** "+socket.username+" connected")
 
