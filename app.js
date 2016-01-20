@@ -7,33 +7,42 @@ app.get('/', function (req, res) {
 });
 var anoncount = 0;
 var muodot_max_length = 300;
-var vuoron_pituus = 30000; // millisekunteina
+var vuoron_pituus = 180000; // millisekunteina
 var muodot = [];
 var piirtovuorot = [];
 var piirtovuorotimeout;
+var sanat = ["ananas", "gorodiili", "karhu", "makkara", "talo", "varjo"];
+var sana = "";
 
 function aloitapiirtovuoro() {
   muodot = [];
   io.emit('muodot', muodot);
   var piirtaja_id = piirtovuorot[0];
   var piirtaja = io.sockets.connected[piirtaja_id].username;
+  sana = sanat[Math.floor(Math.random()*sanat.length)];
   io.emit('draw', false);
+  io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
   io.to(piirtaja_id).emit('draw', true);
-  io.emit('message', "** Now drawing: "+piirtaja);
+  io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
 };
 function lopetapiirtovuoro(arvaaja) {
   if (arvaaja) {
-    io.emit('message', "** "+arvaaja+" guessed the word!");
+    io.emit('message', "** "+arvaaja+" guessed the word '"+sana+"'!");
     clearTimeout(piirtovuorotimeout);
   }
   else {
-    io.emit('message', "** Round ended. Nobody guessed the word.")
+    io.emit('message', "** Round ended. Nobody guessed the word which was "+sana+". L2P plz");
   };
   piirtovuorot.shift();
   if (piirtovuorot.length > 0) {
-    aloitapiirtovuoro();
-  };
+    io.emit('draw', false);
+    setTimeout(function(){aloitapiirtovuoro();}, 3000);
+  }
+  else {
+    io.emit('message', "** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
+    io.emit('draw', true);
+  }
 };
 
 io.on('connection', function(socket){
@@ -52,6 +61,9 @@ io.on('connection', function(socket){
     var msg = "<"+socket.username+"> "+data;
     console.log(msg);
     io.emit('message', msg);
+    if (sana != "" && data.toLowerCase() == sana) {
+      lopetapiirtovuoro(socket.username);
+    }
   });
   socket.on('command', function(data){
     console.log("command: '"+data+"' by "+socket.username);
@@ -73,7 +85,7 @@ io.on('connection', function(socket){
     }
     else if (data == "draw"){
       if (piirtovuorot.indexOf(socket.id) != -1) {
-        socket.emit('message', "** You are already in draw Q");
+        socket.emit('message', "** You are already in draw Q!");
       }
       else {
         piirtovuorot.push(socket.id);

@@ -3,8 +3,9 @@
 
 Work in progress...
 
-#### MONSTER NICE IDEAS LIST
-* MONTA PIIRTÄJÄÄ SAMALLA PIIRTOVUOROLLA !!
+#### **MONSTER** NICE IDEAS
+* MONTA PIIRTÄJÄÄ SAMALLA PIIRTOVUOROLLA
+* IRC-INTEGRAATIO
 
 
 ##### TODO LIST:
@@ -12,9 +13,5 @@ Work in progress...
   * free hand
   * fill
 * korjaa css toimimaan muillakin resoluutioilla kuin 1080p
-* piirtovuoro-loop:
-  1. piirrettävän sanan arvonta
-  2. piirtovuoroon asettaminen
-  3. aloitetaan piirtoaikatimer
-  4. jos sana arvataan aloitetaan alusta
-  5. jos kukaan ei arvannut oikein, piirtoaikatimerin loppuessa aloitetaan alusta
+* piirtovuorolista
+* kunnon hyvä sanalista
