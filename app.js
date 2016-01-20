@@ -7,7 +7,35 @@ app.get('/', function (req, res) {
 });
 var anoncount = 0;
 var muodot_max_length = 300;
+var vuoron_pituus = 30000; // millisekunteina
 var muodot = [];
+var piirtovuorot = [];
+var piirtovuorotimeout;
+
+function aloitapiirtovuoro() {
+  muodot = [];
+  io.emit('muodot', muodot);
+  var piirtaja_id = piirtovuorot[0];
+  var piirtaja = io.sockets.connected[piirtaja_id].username;
+  io.emit('draw', false);
+  io.to(piirtaja_id).emit('draw', true);
+  io.emit('message', "** Now drawing: "+piirtaja);
+  piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
+};
+function lopetapiirtovuoro(arvaaja) {
+  if (arvaaja) {
+    io.emit('message', "** "+arvaaja+" guessed the word!");
+    clearTimeout(piirtovuorotimeout);
+  }
+  else {
+    io.emit('message', "** Round ended. Nobody guessed the word.")
+  };
+  piirtovuorot.shift();
+  if (piirtovuorot.length > 0) {
+    aloitapiirtovuoro();
+  };
+};
+
 io.on('connection', function(socket){
   socket.username = "anon_"+anoncount;
   anoncount += 1;
@@ -43,15 +71,31 @@ io.on('connection', function(socket){
       io.emit('message', msg);
       socket.emit('nick', socket.username);
     }
-  })
+    else if (data == "draw"){
+      if (piirtovuorot.indexOf(socket.id) != -1) {
+        socket.emit('message', "** You are already in draw Q");
+      }
+      else {
+        piirtovuorot.push(socket.id);
+        if (piirtovuorot.length == 1) {
+          aloitapiirtovuoro();
+        }
+        else {
+          socket.emit('message', "** You have been added to draw Q");
+        }
+      }
+    }
+  });
   socket.on('muodot', function(muod){
-    if (muod.length > muodot_max_length) {
-      muodot = muod.slice(muod.length-muodot_max_length);
+    if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
+      if (muod.length > muodot_max_length) {
+        muodot = muod.slice(muod.length-muodot_max_length);
+      }
+      else { 
+        muodot = muod;
+      }
+      io.emit('muodot', muodot);
     }
-    else { 
-      muodot = muod;
-    }
-    io.emit('muodot', muodot);
   });
 });
 

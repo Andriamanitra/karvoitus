@@ -3,7 +3,7 @@
 <html>
 <meta charset="UTF-8">
 <head>
-  <title>Piirtelyjuttu</title>
+  <title>Karvoituspeli</title>
   <link rel="stylesheet" type="text/css" href="http://andriamanitra.me/draw.css">
 </head>
 <body onresize="set_offsets()">
@@ -119,7 +119,11 @@
   socket.on('muodot', function(muod){
     muodot = muod;
     refrsh();
-  })
+  });
+  socket.on('draw', function(asdfg){
+    if (asdfg) {piirtovuoroon();}
+    else {piirtovuorosta();}
+  });
 </script>
 
 </body>

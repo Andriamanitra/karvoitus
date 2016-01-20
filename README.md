@@ -3,6 +3,10 @@
 
 Work in progress...
 
+#### MONSTER NICE IDEAS LIST
+* MONTA PIIRTÄJÄÄ SAMALLA PIIRTOVUOROLLA !!
+
+
 ##### TODO LIST:
 * Piirtotyökaluja:
   * free hand
