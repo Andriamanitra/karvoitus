@@ -1,24 +1,24 @@
 # KARVOITUS
-HTML5 Kuva-arvoituspeli node.js avulla
+###### HTML5 Kuva-arvoituspeli node.js avulla
 
-Work in progress
+Work in progress...
 
-TODO LIST:
+##### TODO LIST:
 
-* free hand -piirtotyökalu
-
-* fill -piirtotyökalu
+* Piirtotyökaluja:
+  * free hand
+  * fill
 
 * korjaa css toimimaan muillakin resoluutioilla kuin 1080p
 
 * piirtovuoro-loop:
 
-  * piirrettävän sanan arvonta
+  1. piirrettävän sanan arvonta
 
-  * piirtovuoroon asettaminen
+  2. piirtovuoroon asettaminen
 
-  * aloitetaan piirtoaikatimer
+  3. aloitetaan piirtoaikatimer
 
-  * jos sana arvataan aloitetaan alusta
+  4. jos sana arvataan aloitetaan alusta
   
-  * jos kukaan ei arvannut oikein, piirtoaikatimerin loppuessa aloitetaan alusta
+  5. jos kukaan ei arvannut oikein, piirtoaikatimerin loppuessa aloitetaan alusta
