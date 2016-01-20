@@ -1,0 +1,32 @@
+<form name="Show">
+  <div id="tools_sarake">
+    Tools:<br>
+    <input type="radio" name="tool" value="line" checked> Line<br>
+    <input type="radio" name="tool" value="circle"> Circle<br>
+    <input type="radio" name="tool" value="oval"> Oval<br>
+    <input type="radio" name="tool" value="rect"> Rectangle<br>
+  </div>
+  <div id="tools_sarake">
+    <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
+    <input type="button" value="Clear" onclick="socket.emit('command', 'clear')"><br>
+    <input type="checkbox" name="Mid", value="true"> Start shape from center<br>
+    <input type="checkbox" name="Fill", value="true"> Fill<br>
+  </div>
+  <div id="tools_sarake">
+    <input type="color" name="Color" value="#000000">
+    <input type="button" id="vnap" value="    " style="background:#000000;" onclick="vaihda_vari(black)">
+    <input type="button" id="vnap" value="    " style="background:#808080;" onclick="vaihda_vari(darkgray)">
+    <input type="button" id="vnap" value="    " style="background:#C0C0C0;" onclick="vaihda_vari(lightgray)">
+    <input type="button" id="vnap" value="    " style="background:#FFFFFF;" onclick="vaihda_vari(white)">
+    <input type="button" id="vnap" value="    " style="background:#FF0000;" onclick="vaihda_vari(red)">
+    <input type="button" id="vnap" value="    " style="background:#FFFF00;" onclick="vaihda_vari(yellow)">
+    <input type="button" id="vnap" value="    " style="background:#00FF00;" onclick="vaihda_vari(green)">
+    <input type="button" id="vnap" value="    " style="background:#00FFFF;" onclick="vaihda_vari(cyan)">
+    <input type="button" id="vnap" value="    " style="background:#0000FF;" onclick="vaihda_vari(blue)">
+    <input type="button" id="vnap" value="    " style="background:#FF00FF;" onclick="vaihda_vari(magenta)">
+  </div>
+  <div id="koords">
+    X: <input type="text" name="MouseX" value="0" size="4"><br>
+    Y: <input type="text" name="MouseY" value="0" size="4"><br>
+  </div>
+  </form>
