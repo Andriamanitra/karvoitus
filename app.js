@@ -20,13 +20,11 @@ function hae_sana() {
   var rndmsana = ""
   db.serialize(function() {
     db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
-      console.log(row.sana);
       rndmsana = row.sana;
-      console.log(rndmsana);
     });
   });
   db.close();
-  console.log(rndmsana)
+  console.log("Word is "+rndmsana);
   return rndmsana;
 }
 
