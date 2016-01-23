@@ -1,4 +1,5 @@
 var app = require('express')();
+var sqlite3 = require('sqlite3').verbose();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -11,16 +12,27 @@ var vuoron_pituus = 180000; // millisekunteina
 var muodot = [];
 var piirtovuorot = [];
 var piirtovuorotimeout;
-var sanat = ["ananas", "gorodiili", "karhu", "makkara", "talo", "varjo"];
 var sana = "";
 var piirtaja = "";
+
+function hae_sana() {
+  var db = new sqlite3.Database("karvoitus.db");
+  var rndmsana = ""
+  db.serialize(function() {
+    db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
+      rndmsana = row.sana;
+    });
+  });
+  db.close();
+  return rndmsana;
+}
 
 function aloitapiirtovuoro() {
   muodot = [];
   io.emit('muodot', muodot);
   var piirtaja_id = piirtovuorot[0];
   piirtaja = io.sockets.connected[piirtaja_id].username;
-  sana = sanat[Math.floor(Math.random()*sanat.length)];
+  sana = hae_sana();
   io.emit('draw', false);
   io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
   io.to(piirtaja_id).emit('draw', true);
