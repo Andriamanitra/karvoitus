@@ -22,9 +22,11 @@ function hae_sana() {
     db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
       console.log(row.sana);
       rndmsana = row.sana;
+      console.log(rndmsana);
     });
   });
   db.close();
+  console.log(rndmsana)
   return rndmsana;
 }
 
@@ -34,6 +36,7 @@ function aloitapiirtovuoro() {
   var piirtaja_id = piirtovuorot[0];
   piirtaja = io.sockets.connected[piirtaja_id].username;
   sana = hae_sana();
+  console.log(sana);
   io.emit('draw', false);
   io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
   io.to(piirtaja_id).emit('draw', true);
