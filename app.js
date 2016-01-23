@@ -31,6 +31,7 @@ function aloitapiirtovuoro() {
   io.emit('draw', false);
   hae_sana();
   setTimeout(function(){
+    console.log("** "+piirtaja+" is drawing "+sana);
     io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
     io.to(piirtaja_id).emit('draw', true);
   }, 3);
@@ -75,6 +76,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
     console.log(socket.username+' disconnected');
     io.emit('message', "** "+socket.username+" disconnected")
+    if (socket.id == piirtovuorot[0]) {lopetapiirtovuoro();}
   });
   socket.on('chat message', function(data){
     var msg = "<"+socket.username+"> "+data.slice(0,256);
