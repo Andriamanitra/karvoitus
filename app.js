@@ -13,12 +13,13 @@ var piirtovuorot = [];
 var piirtovuorotimeout;
 var sanat = ["ananas", "gorodiili", "karhu", "makkara", "talo", "varjo"];
 var sana = "";
+var piirtaja = "";
 
 function aloitapiirtovuoro() {
   muodot = [];
   io.emit('muodot', muodot);
   var piirtaja_id = piirtovuorot[0];
-  var piirtaja = io.sockets.connected[piirtaja_id].username;
+  piirtaja = io.sockets.connected[piirtaja_id].username;
   sana = sanat[Math.floor(Math.random()*sanat.length)];
   io.emit('draw', false);
   io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
