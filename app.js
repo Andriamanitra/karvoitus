@@ -20,7 +20,8 @@ function hae_sana() {
   var rndmsana = ""
   db.serialize(function() {
     db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
-      rndmsana = row.sana;
+      console.log(row);
+      rndmsana = row;
     });
   });
   db.close();
