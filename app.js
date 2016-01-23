@@ -17,9 +17,11 @@ var piirtaja = "";
 
 function hae_sana() {
   var db = new sqlite3.Database("karvoitus.db");
-  var rndmsana = db.serialize(function() {
+  var rndmsana = "";
+  db.serialize(function() {
     db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
-      return row.sana;
+      rndmsana = row.sana;
+      console.log("Selected the word "+rndmsana);
     });
   });
   db.close();
