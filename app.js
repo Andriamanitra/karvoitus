@@ -31,7 +31,7 @@ function aloitapiirtovuoro() {
   piirtaja = io.sockets.connected[piirtaja_id].username;
   io.emit('draw', false);
   hae_sana();
-  io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+rndmsana);
+  io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
   io.to(piirtaja_id).emit('draw', true);
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
