@@ -77,7 +77,7 @@ io.on('connection', function(socket){
     io.emit('message', "** "+socket.username+" disconnected")
   });
   socket.on('chat message', function(data){
-    var msg = "<"+socket.username+"> "+data;
+    var msg = "<"+socket.username+"> "+data.slice(0,256);
     console.log(msg);
     io.emit('message', msg);
     if (sana != "" && data.toLowerCase() == sana) {
@@ -96,11 +96,17 @@ io.on('connection', function(socket){
     }
     else if (data.split(" ")[0] == "nick") {
       var new_nick = data.split(" ")[1];
-      var msg = "* " + socket.username + " is now known as " + new_nick;
-      socket.username = new_nick;
-      console.log(msg);
-      io.emit('message', msg);
-      socket.emit('nick', socket.username);
+      if (new_nick.length > 2 && new_nick.length <= 32) {
+        var msg = "* " + socket.username + " is now known as " + new_nick;
+        socket.username = new_nick;
+        console.log(msg);
+        io.emit('message', msg);
+        socket.emit('nick', socket.username);
+      }
+      else {
+        socket.emit('nick', socket.username);
+        socket.emit('message', "** Nickname must be 3..32 characters!");
+      }
     }
     else if (data == "draw"){
       if (piirtovuorot.indexOf(socket.id) != -1) {
