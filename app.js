@@ -26,6 +26,7 @@ function aloitapiirtovuoro() {
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
 };
+
 function lopetapiirtovuoro(arvaaja) {
   if (arvaaja) {
     io.emit('message', "** "+arvaaja+" guessed the word '"+sana+"'!");

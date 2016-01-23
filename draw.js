@@ -54,7 +54,7 @@ function klik(event) {
 function deklik(event) {
   // jos kursori on liikkunut klikkauksen aloittamisen jälkeen
   // niin viimeistellään piirto onmouseup-eventillä
-  if ( x != Show.MouseX.value || y != Show.MouseY.value ) {
+  if ( piirt == 5 || x != Show.MouseX.value || y != Show.MouseY.value ) {
     if (piirt != 0) {
       viimeistele_piirto();
     }
@@ -74,7 +74,20 @@ function aloita_piirto() {
   else if (Show.tool.value == "rect") {
     piirt = 4;
   }
+  else if (Show.tool.value == "freedraw") {
+    freedraw_koords = [];
+    freedraw();
+    piirt = 5;
+  }
   refrsh();
+}
+
+function freedraw() {
+  if(freedraw.length == 0 || freedraw_koords.slice(-2) != [Show.MouseX.value, Show.MouseY.value]){
+    freedraw_koords.push(Show.MouseX.value);
+    freedraw_koords.push(Show.MouseY.value);
+  }
+  freedraw_timeout = setTimeout(freedraw, 10);
 }
 
 function viimeistele_piirto() {
@@ -89,6 +102,10 @@ function viimeistele_piirto() {
   }
   else if (piirt == 4) {
     tallenna_rect();
+  }
+  else if (piirt == 5) {
+    clearTimeout(freedraw_timeout);
+    tallenna_free();
   }
   socket.emit('muodot', muodot);
   refrsh();
@@ -156,6 +173,13 @@ function tallenna_rect() {
   piirt = 0;
 }
 
+function tallenna_free() {
+  freedraw_koords.push(Show.MouseX.value);
+  freedraw_koords.push(Show.MouseY.value);
+  muodot.push(["free", freedraw_koords, Show.Color.value]);
+  piirt = 0;
+}
+
 function piirra_muodot() {
   for (var i = 0; i < muodot.length; i++) {
     if (muodot[i][0] == "line") {
@@ -169,6 +193,9 @@ function piirra_muodot() {
     }
     else if (muodot[i][0] == "rect") {
       piirra_rect.apply(this, muodot[i].slice(1));
+    }
+    else if (muodot[i][0] == "free") {
+      piirra_free.apply(this, muodot[i].slice(1));
     }
   }
 }
@@ -251,6 +278,17 @@ function piirra_rect(x0, y0, lev, kork, vari, fill) {
   context.closePath();
 }
 
+function piirra_free(koordlist, vari) {
+  context.beginPath();
+  context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
+  for(i = 2; i < koordlist.length; i=i+2) {
+    context.lineTo(koordlist[i]-padd, koordlist[i+1]-padd);
+  }
+  context.strokeStyle = vari;
+  context.stroke();
+  context.closePath();
+}
+
 function refrsh() {
   context.clearRect(0, 0, drawzone.width, drawzone.height);
   piirra_muodot();
@@ -314,6 +352,10 @@ function tempPiirto() {
     else {
       piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), Show.Color.value, Show.Fill.checked);
     }
+  }
+  else if (piirt == 5) {
+    refrsh();
+    piirra_free(freedraw_koords, Show.Color.value);
   }
 }
 
