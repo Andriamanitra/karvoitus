@@ -15,11 +15,13 @@ var piirtovuorotimeout;
 var sana = "";
 var piirtaja = "";
 
-function hae_sana() {
+function hae_sana(piirtaja_id) {
   var db = new sqlite3.Database("karvoitus.db");
   var rndmsana = "";
   db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
     rndmsana = row.sana;
+    io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
+    io.to(piirtaja_id).emit('draw', true);
   });
   db.close();
   return rndmsana;
@@ -30,11 +32,9 @@ function aloitapiirtovuoro() {
   io.emit('muodot', muodot);
   var piirtaja_id = piirtovuorot[0];
   piirtaja = io.sockets.connected[piirtaja_id].username;
+  io.emit('draw', false);
   sana = hae_sana();
   console.log(sana);
-  io.emit('draw', false);
-  io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
-  io.to(piirtaja_id).emit('draw', true);
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
 };
