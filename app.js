@@ -17,7 +17,7 @@ var piirtaja = "";
 
 function hae_sana() {
   var db = new sqlite3.Database("karvoitus.db");
-  db.each("SELECT * FROM adjektiivit ORDER BY RANDOM() LIMIT 1", function(err, row) {
+  db.each("SELECT * FROM sanasto ORDER BY RANDOM() LIMIT 1", function(err, row) {
     sana = row.sana;
   });
   db.close();
