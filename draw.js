@@ -87,7 +87,7 @@ function freedraw() {
     freedraw_koords.push(Show.MouseX.value);
     freedraw_koords.push(Show.MouseY.value);
   }
-  freedraw_timeout = setTimeout(freedraw, 10);
+  freedraw_timeout = setTimeout(freedraw, 5);
 }
 
 function viimeistele_piirto() {
@@ -283,15 +283,15 @@ function piirra_rect(x0, y0, lev, kork, vari, paks, fill) {
 }
 
 function piirra_free(koordlist, vari, paks) {
-  for(i = 0; i < koordlist.length; i=i+2) {
-    context.beginPath();
-    context.moveTo(koordlist[i]-padd, koordlist[i+1]-padd);
-    context.lineTo(koordlist[i+2]-padd, koordlist[i+3]-padd);
-    context.strokeStyle = vari;
-    context.lineWidth=paks;
-    context.stroke();
-    context.closePath();
+  context.strokeStyle = vari;
+  context.lineWidth=paks;
+  context.beginPath();
+  context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
+  for(i = 2; i < koordlist.length; i=i+2) {
+    context.lineTo(koordlist[i]-padd, koordlist[i+1]-padd);
   }
+  context.stroke();
+  context.closePath();
 }
 
 function refrsh() {
