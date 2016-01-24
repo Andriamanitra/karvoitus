@@ -285,8 +285,8 @@ function piirra_rect(x0, y0, lev, kork, vari, paks, fill) {
 function piirra_free(koordlist, vari, paks) {
   for(i = 0; i < koordlist.length; i=i+4) {
     context.beginPath();
-    context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
-    context.lineTo(koordlist[i]-padd, koordlist[i+1]-padd);
+    context.moveTo(koordlist[i]-padd, koordlist[i+1]-padd);
+    context.lineTo(koordlist[i+2]-padd, koordlist[i+3]-padd);
     context.strokeStyle = vari;
     context.lineWidth=paks;
     context.stroke();
