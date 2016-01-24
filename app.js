@@ -34,18 +34,18 @@ function aloitapiirtovuoro() {
     console.log("** "+piirtaja+" is drawing "+sana);
     io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
     io.to(piirtaja_id).emit('draw', true);
-  }, 3);
+  }, 5);
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
 };
 
 function lopetapiirtovuoro(arvaaja) {
+  clearTimeout(piirtovuorotimeout);
   if (arvaaja) {
     io.emit('message', "** "+arvaaja+" guessed the word '"+sana+"'!");
-    clearTimeout(piirtovuorotimeout);
   }
   else {
-    io.emit('message', "** Round ended. Nobody guessed the word which was "+sana+". L2P plz");
+    emittoi("** Round ended. Nobody guessed the word which was "+sana+". L2P plz");
   };
   piirtovuorot.shift();
   if (piirtovuorot.length > 0) {
@@ -53,10 +53,15 @@ function lopetapiirtovuoro(arvaaja) {
     setTimeout(function(){aloitapiirtovuoro();}, 3000);
   }
   else {
-    io.emit('message', "** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
+    emittoi("** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
     io.emit('draw', true);
   }
 };
+
+function emittoi(msg) {
+  io.emit('message', msg);
+  console.log(msg);
+}
 
 io.on('connection', function(socket){
   socket.username = "anon_"+anoncount;
@@ -70,8 +75,7 @@ io.on('connection', function(socket){
   else {
     socket.emit('message', "** The game is in ebin multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
-  console.log(socket.username+' connected');
-  io.emit('message', "** "+socket.username+" connected")
+  emittoi("** "+socket.username+" connected")
 
   socket.on('disconnect', function(){
     console.log(socket.username+' disconnected');
@@ -80,8 +84,7 @@ io.on('connection', function(socket){
   });
   socket.on('chat message', function(data){
     var msg = "<"+socket.username+"> "+data.slice(0,256);
-    console.log(msg);
-    io.emit('message', msg);
+    emittoi(msg);
     if (sana != "" && data.toLowerCase() == sana) {
       lopetapiirtovuoro(socket.username);
     }
@@ -101,8 +104,7 @@ io.on('connection', function(socket){
       if (new_nick.length > 2 && new_nick.length <= 32) {
         var msg = "* " + socket.username + " is now known as " + new_nick;
         socket.username = new_nick;
-        console.log(msg);
-        io.emit('message', msg);
+        emittoi(msg);
         socket.emit('nick', socket.username);
       }
       else {
@@ -121,6 +123,7 @@ io.on('connection', function(socket){
         }
         else {
           socket.emit('message', "** You have been added to draw Q");
+          console.log("** "+socket.username+" was added to draw Q");
         }
       }
     }

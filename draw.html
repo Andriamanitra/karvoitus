@@ -64,6 +64,7 @@
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   var tools = document.getElementById("tools").innerHTML;
+  var timestamps = false;
 
   function piirtovuoroon() {
     document.getElementById("tools").innerHTML = tools;
@@ -81,13 +82,26 @@
     document.getElementById("tools").innerHTML = "";
   }
 
-  function test() {
-    if (document.getElementById("tools").innerHTML == "") {
-      piirtovuoroon();
+  function toggle_timestamp() {
+    if (timestamps) {
+      timestamps = false;
     }
     else {
-      piirtovuorosta();
+      timestamps = true;
     }
+  }
+
+  function addz(x) {
+    if (x < 10) {
+      return "0"+x;
+    }
+    return x;
+  }
+
+  function timestamp() {
+    var d = new Date();
+    var timestring = addz(d.getHours())+":"+addz(d.getMinutes())+":"+addz(d.getSeconds());
+    return "["+timestring+"] ";
   }
 
   piirtovuoroon();
@@ -99,8 +113,12 @@
   $('form').submit(function(){
     var msg_val = $('#msg').val()
     if (msg_val[0] == '/') {
-      if (msg_val.slice(1) == "test") { test() }
-      socket.emit('command', msg_val.slice(1));
+      if (msg_val.slice(1) == "timestamp") { 
+        toggle_timestamp();
+      }
+      else {
+        socket.emit('command', msg_val.slice(1));
+      }
     }
     else {
       socket.emit('chat message', msg_val );
@@ -109,6 +127,9 @@
     return false;
   });
   socket.on('message', function(msg){
+    if (timestamps) {
+      msg = timestamp()+msg;
+    }
     $('#messages').append($('<li>').text(msg));
     $('#messages').scrollTop($('#messages')[0].scrollHeight);
   });

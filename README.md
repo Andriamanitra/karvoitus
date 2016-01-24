@@ -10,8 +10,8 @@ Work in progress...
 
 ##### TODO LIST:
 * Piirtotyökaluja:
-  * free hand
   * fill
+  * kolmiot?
 * korjaa css toimimaan muillakin resoluutioilla kuin 1080p
 * piirtovuorolista
-* kunnon hyvä sanalista
+* kehitä sanalistaa (mahdollisuus valita mitä sanaluokkaa piirtää?)
