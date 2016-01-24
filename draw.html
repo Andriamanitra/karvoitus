@@ -26,8 +26,10 @@
   <div id="tools_sarake">
     <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
     <input type="button" value="Clear" onclick="socket.emit('command', 'clear')"><br>
-    <input type="checkbox" name="Mid", value="true"> Start shape from center<br>
-    <input type="checkbox" name="Fill", value="true"> Fill<br>
+    <input type="checkbox" name="Mid" value="true"> Start shape from center<br>
+    <input type="checkbox" name="Fill" value="true"> Fill<br>
+    Line width<br>
+    <input type="range" name="Width" value=1 min=1 max=80>
   </div>
   <div id="tools_sarake">
     <input type="color" name="Color" value="#000000">
@@ -57,7 +59,7 @@
   </form>
 </div>
 
-<script src="http://andriamanitra.me/draw.js"></script>
+<script src="http://andriamanitra.me/juttuja/draw.js"></script>
 
 <!-- chattisocketjutut -->
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
