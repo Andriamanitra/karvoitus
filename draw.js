@@ -283,15 +283,15 @@ function piirra_rect(x0, y0, lev, kork, vari, paks, fill) {
 }
 
 function piirra_free(koordlist, vari, paks) {
-  context.beginPath();
-  context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
-  for(i = 2; i < koordlist.length; i=i+2) {
+  for(i = 0; i < koordlist.length; i=i+4) {
+    context.beginPath();
+    context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
     context.lineTo(koordlist[i]-padd, koordlist[i+1]-padd);
+    context.strokeStyle = vari;
+    context.lineWidth=paks;
+    context.stroke();
+    context.closePath();
   }
-  context.strokeStyle = vari;
-  context.lineWidth=paks;
-  context.stroke();
-  context.closePath();
 }
 
 function refrsh() {
