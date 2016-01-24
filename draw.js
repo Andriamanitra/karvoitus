@@ -285,7 +285,6 @@ function piirra_rect(x0, y0, lev, kork, vari, paks, fill) {
 function piirra_free(koordlist, vari, paks) {
   context.strokeStyle = vari;
   context.lineWidth = paks;
-  context.lineJoin = 'round';
   context.beginPath();
   context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
   for(i = 2; i < koordlist.length; i=i+2) {
@@ -365,7 +364,8 @@ function tempPiirto() {
   }
 }
 
-context.lineCap="round";
+context.lineCap = "round";
+context.lineJoin = "round";
 
 // vähän lainakoodia:
 // Detect if the browser is IE or not.
