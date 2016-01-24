@@ -47,6 +47,7 @@ function lopetapiirtovuoro(arvaaja) {
   else {
     emittoi("** Round ended. Nobody guessed the word which was "+sana+". L2P plz");
   };
+  sana = "";
   piirtovuorot.shift();
   if (piirtovuorot.length > 0) {
     io.emit('draw', false);
@@ -85,7 +86,7 @@ io.on('connection', function(socket){
   socket.on('chat message', function(data){
     var msg = "<"+socket.username+"> "+data.slice(0,256);
     emittoi(msg);
-    if (sana != "" && data.toLowerCase() == sana) {
+    if (sana != "" && data.toLowerCase() == sana.toLowerCase()) {
       lopetapiirtovuoro(socket.username);
     }
   });
