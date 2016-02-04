@@ -87,7 +87,13 @@ function freedraw() {
     freedraw_koords.push(Show.MouseX.value);
     freedraw_koords.push(Show.MouseY.value);
   }
-  freedraw_timeout = setTimeout(freedraw, 5);
+
+  if (freedraw_koords.length >= 1000) {
+    tallenna_free();
+  }
+  else {
+    freedraw_timeout = setTimeout(freedraw, 5);
+  }
 }
 
 function viimeistele_piirto() {
@@ -177,6 +183,7 @@ function tallenna_free() {
   freedraw_koords.push(Show.MouseX.value);
   freedraw_koords.push(Show.MouseY.value);
   muodot.push(["free", freedraw_koords, Show.Color.value, Show.Width.value]);
+  refrsh();
   piirt = 0;
 }
 
