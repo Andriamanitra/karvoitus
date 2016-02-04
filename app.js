@@ -39,11 +39,13 @@ function aloitapiirtovuoro() {
     io.to(piirtaja_id).emit('draw', true);
   }, 5);
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
+  io.emit('drawtime', vuoron_pituus/1000);
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
 };
 
 function lopetapiirtovuoro(arvaaja) {
   clearTimeout(piirtovuorotimeout);
+  io.emit('drawtime', "");
   if (arvaaja) {
     io.emit('message', "** "+arvaaja+" guessed the word '"+sana+"'!");
   }

@@ -11,9 +11,10 @@
   <canvas id="drawzone" width="800" height="450">
   If you see this text HTML5 Canvas is not supported by your browser.
   </canvas>
+  <div id="piirtoaika" class="unselectable"></div>
 </div>
 
-<div id="tools">
+<div id="tools" class="unselectable">
 <form name="Show">
   <div id="tools_sarake">
     Tools:<br>
@@ -67,6 +68,8 @@
 <script>
   var tools = document.getElementById("tools").innerHTML;
   var timestamps = false;
+  var sekunnit;
+  var piirtoaikalaskuri;
 
   function piirtovuoroon() {
     document.getElementById("tools").innerHTML = tools;
@@ -106,6 +109,14 @@
     return "["+timestring+"] ";
   }
 
+  function piirtoaika_tick() {
+  	sekunnit = sekunnit-1;
+  	var mins = Math.floor(sekunnit/60);
+  	var seks = addz(sekunnit%60);
+    $('#piirtoaika').html(mins+":"+seks);
+    piirtoaikalaskuri = setTimeout(piirtoaika_tick, 1000);
+  }
+
   piirtovuoroon();
 
   var socket = io();
@@ -143,8 +154,22 @@
     refrsh();
   });
   socket.on('draw', function(asdfg){
-    if (asdfg) {piirtovuoroon();}
-    else {piirtovuorosta();}
+    if (asdfg) {
+    	piirtovuoroon();
+    }
+    else {
+    	piirtovuorosta();
+    }
+  });
+  socket.on('drawtime', function(draw_t){
+  	if (draw_t != "") {
+  		sekunnit = draw_t+1;
+  		piirtoaika_tick();
+    }
+    else {
+    	clearTimeout(piirtoaikalaskuri);
+    	$('#piirtoaika').html("");
+    }
   });
 </script>
 

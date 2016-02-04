@@ -28,6 +28,15 @@ body {
   background-color:white;
   border: 1px solid black;
 }
+#piirtoaika {
+  position: absolute;
+  top: 510;
+  left: 780;
+  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  font-size: 30;
+  font-weight: bold;
+  cursor: crosshair;
+}
 #tools {
   position: absolute;
   top: 550;
@@ -35,6 +44,7 @@ body {
   bottom: 0;
   width: 98%;
   padding: 5px 1%;
+  cursor: default;
 }
 #tools_sarake {
   /*border: 2px solid blue; */
@@ -92,3 +102,11 @@ body {
 }
 #messages li {padding: 1px 10px; }
 #messages li:nth-child(odd) { background: #FAFAFA; }
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
