@@ -2,12 +2,13 @@
   "name": "karvoitus",
   "version": "0.0.1",
   "description": "mun eka node.js jutska :3 elikkä karvoitus",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mikko Esko",
   "license": "ISC",
+  "repository": "andriamanitra/karvoitus",
   "dependencies": {
     "express": "^4.13.3",
     "socket.io": "^1.3.7",

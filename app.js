@@ -1,7 +1,10 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var sqlite3 = require('sqlite3').verbose();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/draw.html');
@@ -142,6 +145,6 @@ io.on('connection', function(socket){
   });
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(8080, function(){
+  console.log('listening on *:8080');
 });
