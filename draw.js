@@ -374,27 +374,18 @@ function tempPiirto() {
 context.lineCap = "round";
 context.lineJoin = "round";
 
-// vähän lainakoodia:
-// Detect if the browser is IE or not.
-// If it is not IE, we assume that the browser is NS.
-var IE = document.all?true:false;
-// If NS -- that is, !IE -- then set up for mouse capture
-if (!IE) document.captureEvents(Event.MOUSEMOVE)
-// Set-up to use getMouseXY function onMouseMove
-document.onmousemove = getMouseXY;
+
+document.getElementById("drawzone").addEventListener("mousemove", getMouseXY);
+
+
+// modifioitua lainacoodia
 // Temporary variables to hold mouse x-y pos.s
 var tempX = 0;
 var tempY = 0;
 // Main function to retrieve mouse x-y pos.s
 function getMouseXY(e) {
-  if (IE) { // grab the x-y pos.s if browser is IE
-    tempX = event.clientX + document.body.scrollLeft
-    tempY = event.clientY + document.body.scrollTop
-  } else {  // grab the x-y pos.s if browser is NS
-    tempX = e.pageX
-    tempY = e.pageY
-  } 
-
+  tempX = e.pageX
+  tempY = e.pageY
   tempX = tempX-frameLeft;
   tempY = tempY-frameTop;
 
