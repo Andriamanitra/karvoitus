@@ -63,7 +63,6 @@ function lopetapiirtovuoro(arvaaja) {
     emittoi("** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
     io.emit('draw', true);
   }
-  send_users();
 };
 
 function emittoi(msg) {
