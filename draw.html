@@ -7,50 +7,72 @@
 <body onresize="set_offsets()">
 
 <div id="left">
-<div id="drawframe" onmousedown="klik(event)" onmouseup="deklik(event)">
-  <canvas id="drawzone" width="800" height="450">
-  If you see this text HTML5 Canvas is not supported by your browser.
-  </canvas>
-  <div id="piirtoaika" class="unselectable"></div>
-</div>
+  <div id="drawframe" onmousedown="klik(event)" onmouseup="deklik(event)">
+    <canvas id="drawzone" width="800" height="450">
+    If you see this text HTML5 Canvas is not supported by your browser.
+    </canvas>
+    <div id="piirtoaika" class="unselectable"></div>
+  </div>
 
-<div id="tools" class="unselectable">
-<form name="Show">
-  <div id="tools_sarake">
-    Tools:<br>
-    <input type="radio" name="tool" value="freedraw" checked> Free draw<br>
-    <input type="radio" name="tool" value="line"> Line<br>
-    <input type="radio" name="tool" value="circle"> Circle<br>
-    <input type="radio" name="tool" value="oval"> Oval<br>
-    <input type="radio" name="tool" value="rect"> Rectangle<br>
+  <div id="tools" class="unselectable">
+  <form name="Show">
+    <div id="tools_sarake">
+      Tools:<br>
+      <input type="radio" name="tool" value="freedraw" checked> Free draw<br>
+      <input type="radio" name="tool" value="line"> Line<br>
+      <input type="radio" name="tool" value="circle"> Circle<br>
+      <input type="radio" name="tool" value="oval"> Oval<br>
+      <input type="radio" name="tool" value="rect"> Rectangle<br>
+    </div>
+    <div id="tools_sarake">
+      <style scoped>
+          .button-xsmall {
+              font-size: 70%;
+          }
+      </style>
+      <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
+      <input type="button" value="Clear" onclick="socket.emit('command', 'clear')"><br>
+      <input type="checkbox" name="Mid" value="true"> Start shape from center<br>
+      <input type="checkbox" name="Fill" value="true"> Fill<br>
+      Line width<br>
+      <input type="range" name="Width" style="cursor: pointer" value=1 min=1 max=80>
+    </div>
+    <div id="tools_sarake">
+      <div id="vval-div"><input type="color" id="vval" name="Color" value="#000000"></div>
+      <input type="button" id="vnap" value="" style="margin-left:78px;background:#000000;" onclick="vaihda_vari('#000000')">
+      <input type="button" id="vnap" value="" style="background:#808080;" onclick="vaihda_vari('#808080')">
+      <input type="button" id="vnap" value="" style="background:#C0C0C0;" onclick="vaihda_vari('#C0C0C0')">
+      <input type="button" id="vnap" value="" style="background:#FFFFFF;" onclick="vaihda_vari('#FFFFFF')"><br>
+      <input type="button" id="vnap" value="" style="background:#FF0000;" onclick="vaihda_vari('#FF0000')">
+      <input type="button" id="vnap" value="" style="background:#FFFF00;" onclick="vaihda_vari('#FFFF00')">
+      <input type="button" id="vnap" value="" style="background:#00FF00;" onclick="vaihda_vari('#00FF00')">
+      <input type="button" id="vnap" value="" style="background:#00FFFF;" onclick="vaihda_vari('#00FFFF')">
+      <input type="button" id="vnap" value="" style="background:#0000FF;" onclick="vaihda_vari('#0000FF')">
+      <input type="button" id="vnap" value="" style="background:#FF00FF;" onclick="vaihda_vari('#FF00FF')"><br>
+      <input type="button" id="vnap" value="" style="background:#880000;" onclick="vaihda_vari('#880000')">
+      <input type="button" id="vnap" value="" style="background:#777700;" onclick="vaihda_vari('#777700')">
+      <input type="button" id="vnap" value="" style="background:#006600;" onclick="vaihda_vari('#006600')">
+      <input type="button" id="vnap" value="" style="background:#007777;" onclick="vaihda_vari('#007777')">
+      <input type="button" id="vnap" value="" style="background:#000088;" onclick="vaihda_vari('#000088')">
+      <input type="button" id="vnap" value="" style="background:#880088;" onclick="vaihda_vari('#880088')"><br>
+      <input type="button" id="vnap" value="" style="background:#FF80AA;" onclick="vaihda_vari('#FF80AA')">
+      <input type="button" id="vnap" value="" style="background:#FF8C1A;" onclick="vaihda_vari('#FF8C1A')">
+      <input type="button" id="vnap" value="" style="background:#663300;" onclick="vaihda_vari('#663300')">
+      <input type="button" id="vnap" value="" style="background:#FFD9B3;" onclick="vaihda_vari('#FFD9B3')">
+      <input type="button" id="vnap" value="" style="background:#111111;" onclick="vaihda_vari('#111111')">
+      <input type="button" id="vnap" value="" style="background:#CC33FF;" onclick="vaihda_vari('#CC33FF')"><br>
+    </div>
+    <div id="koords">
+      X: <input type="text" name="MouseX" value="0" size="4"><br>
+      Y: <input type="text" name="MouseY" value="0" size="4"><br>
+    </div>
+  </form>
   </div>
-  <div id="tools_sarake">
-    <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
-    <input type="button" value="Clear" onclick="socket.emit('command', 'clear')"><br>
-    <input type="checkbox" name="Mid" value="true"> Start shape from center<br>
-    <input type="checkbox" name="Fill" value="true"> Fill<br>
-    Line width<br>
-    <input type="range" name="Width" value=1 min=1 max=80>
+  <div id="userlist">
+    Userlist
+    <table id="users" style="width:100%">
+    </table>
   </div>
-  <div id="tools_sarake">
-    <input type="color" name="Color" value="#000000">
-    <input type="button" id="vnap" value="    " style="background:#000000;" onclick="vaihda_vari(black)">
-    <input type="button" id="vnap" value="    " style="background:#808080;" onclick="vaihda_vari(darkgray)">
-    <input type="button" id="vnap" value="    " style="background:#C0C0C0;" onclick="vaihda_vari(lightgray)">
-    <input type="button" id="vnap" value="    " style="background:#FFFFFF;" onclick="vaihda_vari(white)">
-    <input type="button" id="vnap" value="    " style="background:#FF0000;" onclick="vaihda_vari(red)">
-    <input type="button" id="vnap" value="    " style="background:#FFFF00;" onclick="vaihda_vari(yellow)">
-    <input type="button" id="vnap" value="    " style="background:#00FF00;" onclick="vaihda_vari(green)">
-    <input type="button" id="vnap" value="    " style="background:#00FFFF;" onclick="vaihda_vari(cyan)">
-    <input type="button" id="vnap" value="    " style="background:#0000FF;" onclick="vaihda_vari(blue)">
-    <input type="button" id="vnap" value="    " style="background:#FF00FF;" onclick="vaihda_vari(magenta)">
-  </div>
-  <div id="koords">
-    X: <input type="text" name="MouseX" value="0" size="4"><br>
-    Y: <input type="text" name="MouseY" value="0" size="4"><br>
-  </div>
-</form>
-</div>
 </div>
 
 <div id="right">
@@ -110,9 +132,9 @@
   }
 
   function piirtoaika_tick() {
-  	sekunnit = sekunnit-1;
-  	var mins = Math.floor(sekunnit/60);
-  	var seks = addz(sekunnit%60);
+    sekunnit = sekunnit-1;
+    var mins = Math.floor(sekunnit/60);
+    var seks = addz(sekunnit%60);
     $('#piirtoaika').html(mins+":"+seks);
     piirtoaikalaskuri = setTimeout(piirtoaika_tick, 1000);
   }
@@ -155,22 +177,30 @@
   });
   socket.on('draw', function(asdfg){
     if (asdfg) {
-    	piirtovuoroon();
+      piirtovuoroon();
     }
     else {
-    	piirtovuorosta();
+      piirtovuorosta();
     }
   });
   socket.on('drawtime', function(draw_t){
-  	if (draw_t != "") {
-  		sekunnit = draw_t+1;
-  		piirtoaika_tick();
+    if (draw_t != "") {
+      sekunnit = draw_t+1;
+      piirtoaika_tick();
     }
     else {
-    	clearTimeout(piirtoaikalaskuri);
-    	$('#piirtoaika').html("");
+      clearTimeout(piirtoaikalaskuri);
+      $('#piirtoaika').html("");
     }
   });
+  socket.on('users', function(userlista){
+    $('#users tbody tr').remove();
+    for (var i = 0; i < userlista.length; i++) {
+      var row = document.getElementById('users').insertRow(0);
+      row.insertCell(0).innerHTML = userlista[i][0];
+      row.insertCell(1).innerHTML = userlista[i][1];
+    }
+  })
 </script>
 
 </body>

@@ -13,6 +13,7 @@ var anoncount = 0;
 var muodot_max_length = 300;
 var vuoron_pituus = 180000; // millisekunteina
 var muodot = [];
+var userlist = [];
 var piirtovuorot = [];
 var piirtovuorotimeout;
 var sana = "";
@@ -62,6 +63,7 @@ function lopetapiirtovuoro(arvaaja) {
     emittoi("** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
     io.emit('draw', true);
   }
+  send_users();
 };
 
 function emittoi(msg) {
@@ -69,8 +71,41 @@ function emittoi(msg) {
   console.log(msg);
 }
 
+function poista_user(poistettava) {
+  userlist.splice(userlist.indexOf(poistettava), 1);
+  send_users();
+}
+
+function lisaa_user(lisattava) {
+  userlist.push(lisattava);
+  send_users();
+}
+
+function vaihda_user(wanha, uus) {
+  userlist.splice(userlist.indexOf(wanha), 1);
+  userlist.push(uus);
+}
+
+function send_users() {
+  var usertable = [];
+  var ei_piirtajat = userlist;
+  for (var i = 0; i < piirtovuorot.length; i++) {
+    var usern = io.sockets.connected[piirtovuorot[i]].username;
+    usertable.push([i.toString(), usern]);
+    var ind = ei_piirtajat.indexOf(usern);
+    if(ind > -1) {
+      ei_piirtajat.splice(ind, 1);
+    }
+  }
+  ei_piirtajat.sort()
+  for ( var i = 0; i < ei_piirtajat.length; i++) {
+    usertable.push(["", ei_piirtajat[i]])
+  }
+  io.emit('users', usertable.reverse());
+}
+
 io.on('connection', function(socket){
-  socket.username = "anon_"+anoncount;
+  socket.username = "~anon_"+anoncount;
   anoncount += 1;
   socket.emit('nick', socket.username);
   socket.emit('muodot', muodot);
@@ -82,12 +117,23 @@ io.on('connection', function(socket){
     socket.emit('message', "** The game is in ebin multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
   emittoi("** "+socket.username+" connected")
+  lisaa_user(socket.username)
 
   socket.on('disconnect', function(){
     console.log(socket.username+' disconnected');
-    io.emit('message', "** "+socket.username+" disconnected")
-    if (socket.id == piirtovuorot[0]) {lopetapiirtovuoro();}
+    io.emit('message', "** "+socket.username+" disconnected");
+    var ind = piirtovuorot.indexOf(socket.id);
+    if (ind > -1) {
+      if (ind == 0) {
+        lopetapiirtovuoro();
+      }
+      else {
+        piirtovuorot.splice(ind, 1);
+      }
+    }
+    poista_user(socket.username);
   });
+
   socket.on('chat message', function(data){
     var msg = "<"+socket.username+"> "+data.slice(0,256);
     emittoi(msg);
@@ -109,9 +155,11 @@ io.on('connection', function(socket){
       var new_nick = data.split(" ")[1];
       if (new_nick.length > 2 && new_nick.length <= 32) {
         var msg = "* " + socket.username + " is now known as " + new_nick;
+        vaihda_user(socket.username, new_nick);
         socket.username = new_nick;
         emittoi(msg);
         socket.emit('nick', socket.username);
+        send_users();
       }
       else {
         socket.emit('nick', socket.username);
@@ -124,6 +172,7 @@ io.on('connection', function(socket){
       }
       else {
         piirtovuorot.push(socket.id);
+        send_users();
         if (piirtovuorot.length == 1) {
           aloitapiirtovuoro();
         }

@@ -6,17 +6,7 @@ var drawzone = document.getElementById('drawzone'),
     y = 0,
     piirt = 0,
     padd = 50,
-    muodot = [],
-    black = "#000000",
-    darkgray = "#808080",
-    lightgray = "#C0C0C0",
-    white = "#FFFFFF",
-    red = "#FF0000",
-    yellow = "#FFFF00",
-    green = "#00FF00",
-    cyan = "#00FFFF",
-    blue = "#0000FF",
-    magenta = "#FF00FF";
+    muodot = [];
     
 
 drawframe.addEventListener('contextmenu', function(rightclick) {
