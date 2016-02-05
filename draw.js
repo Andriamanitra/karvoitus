@@ -2,6 +2,7 @@ var drawzone = document.getElementById('drawzone'),
     frameLeft = drawframe.offsetLeft,
     frameTop = drawframe.offsetTop,
     context = drawzone.getContext('2d'),
+    apuviivacolor = "#FFFFFF",
     x = 0,
     y = 0,
     piirt = 0,
@@ -319,7 +320,7 @@ function tempPiirto() {
       piirra_circle(x_keskip, y_keskip, r, Show.Color.value, Show.Width.value, Show.Fill.checked);
     }
     context.setLineDash([5]);
-    piirra_line(x, y, tempX, tempY, lightgray, 1);
+    piirra_line(x, y, tempX, tempY, apuviivacolor, 1);
     context.setLineDash([]);
   }
   else if (piirt == 3) {
@@ -329,12 +330,12 @@ function tempPiirto() {
       kork = Math.abs(2*(tempY-y));
       piirra_oval(x, y, 1.39*lev, 1.39*kork, Show.Color.value, Show.Width.value, Show.Fill.checked);
       context.setLineDash([5]);
-      piirra_line(x, y, tempX, tempY, lightgray, 1);
+      piirra_line(x, y, tempX, tempY, apuviivacolor, 1);
       context.setLineDash([]);
     }
     else {
       context.setLineDash([5]);
-      context.strokeStyle = lightgray;
+      context.strokeStyle = apuviivacolor;
       context.lineWidth = 1;
       context.strokeRect(x-padd, y-padd, tempX-x, tempY-y);
       context.setLineDash([]);
