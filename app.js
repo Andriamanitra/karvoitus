@@ -63,6 +63,7 @@ function lopetapiirtovuoro(arvaaja) {
     emittoi("** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
     io.emit('draw', true);
   }
+  send_users();
 };
 
 function emittoi(msg) {
@@ -87,7 +88,7 @@ function vaihda_user(wanha, uus) {
 
 function send_users() {
   var usertable = [];
-  var ei_piirtajat = userlist;
+  var ei_piirtajat = userlist.slice(0);
   for (var i = 0; i < piirtovuorot.length; i++) {
     var usern = io.sockets.connected[piirtovuorot[i]].username;
     usertable.push([i.toString(), usern]);
