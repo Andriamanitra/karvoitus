@@ -105,7 +105,7 @@ function send_users() {
 }
 
 io.on('connection', function(socket){
-  socket.username = "~anon_"+anoncount;
+  socket.username = "~anon"+("0000"+anoncount).slice(-4);
   anoncount += 1;
   socket.emit('nick', socket.username);
   socket.emit('muodot', muodot);
