@@ -8,7 +8,6 @@ var drawzone = document.getElementById('drawzone'),
     piirt = 0,
     padd = 50,
     muodot = [];
-    
 
 drawframe.addEventListener('contextmenu', function(rightclick) {
     rightclick.preventDefault();
@@ -240,9 +239,9 @@ function piirra_oval(x_keskip, y_keskip, lev, kork, vari, paks, fill) {
   kork = parseFloat(kork);
 
   context.beginPath();
-  
+
   context.moveTo(x_keskip, y_keskip - kork/2); // A1
-  
+
   context.bezierCurveTo(
     x_keskip + lev/2, y_keskip - kork/2, // C1
     x_keskip + lev/2, y_keskip + kork/2, // C2
@@ -387,7 +386,7 @@ function getMouseXY(e) {
 
   // catch possible negative values in NS4
   if (tempX < 0){tempX = 0}
-  if (tempY < 0){tempY = 0}  
+  if (tempY < 0){tempY = 0}
   // show the position values in the form named Show
   // in the text fields named MouseX and MouseY
   document.Show.MouseX.value = tempX

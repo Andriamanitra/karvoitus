@@ -1,6 +1,4 @@
 body {
-  min-height: 700;
-  min-width: 1100;
   text-align: left;
 }
 #left {
@@ -23,8 +21,8 @@ body {
 }
 #drawframe {
   cursor: crosshair;
-  width: 800;
-  height: 450;
+  width: 800px;
+  height: 450px;
   background-color: #EEEEEE;
   padding: 50px;
 }
@@ -72,7 +70,7 @@ body {
 /* Värinvaihtonapit */
 .vnap {
   cursor: pointer;
-  font-size: 8;
+  font-size: 8px;
   height: 30px;
   width: 30px;
   border-collapse: separate;
