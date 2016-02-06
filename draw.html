@@ -1,8 +1,10 @@
 <html>
-<meta charset="UTF-8">
 <head>
-  <title>Karvoituspeli</title>
+  <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="draw.css">
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <title>Karvoituspeli</title>
 </head>
 <body onresize="set_offsets()">
 
@@ -84,9 +86,6 @@
 
 <script src="draw.js"></script>
 
-<!-- chattisocketjutut -->
-<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   var tools = document.getElementById("tools").innerHTML;
   var timestamps = false;
@@ -95,7 +94,6 @@
 
   function piirtovuoroon() {
     document.getElementById("tools").innerHTML = tools;
-    
     document.onmousemove = getMouseXY;
     document.getElementById("drawframe").onmousedown = klik;
     document.getElementById("drawframe").onmouseup = deklik;
@@ -105,7 +103,6 @@
     document.onmousemove = "";
     document.getElementById("drawframe").onmousedown = "";
     document.getElementById("drawframe").onmouseup = "";
-
     document.getElementById("tools").innerHTML = "";
   }
 
