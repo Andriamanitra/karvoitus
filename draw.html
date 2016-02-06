@@ -18,7 +18,7 @@
 
   <div id="tools" class="unselectable">
   <form name="Show">
-    <div id="tools_sarake">
+    <div class="tools_sarake">
       Tools:<br>
       <input type="radio" name="tool" value="freedraw" checked> Free draw<br>
       <input type="radio" name="tool" value="line"> Line<br>
@@ -26,7 +26,7 @@
       <input type="radio" name="tool" value="oval"> Oval<br>
       <input type="radio" name="tool" value="rect"> Rectangle<br>
     </div>
-    <div id="tools_sarake">
+    <div class="tools_sarake">
       <style scoped>
           .button-xsmall {
               font-size: 70%;
@@ -39,30 +39,30 @@
       Line width<br>
       <input type="range" name="Width" style="cursor: pointer" value=1 min=1 max=80>
     </div>
-    <div id="tools_sarake">
+    <div class="tools_sarake">
       <div id="vval-div"><input type="color" id="vval" name="Color" value="#000000"></div>
       <input type="button" id="vnap" value="" style="margin-left:78px;background:#000000;" onclick="vaihda_vari('#000000')">
-      <input type="button" id="vnap" value="" style="background:#808080;" onclick="vaihda_vari('#808080')">
-      <input type="button" id="vnap" value="" style="background:#C0C0C0;" onclick="vaihda_vari('#C0C0C0')">
-      <input type="button" id="vnap" value="" style="background:#FFFFFF;" onclick="vaihda_vari('#FFFFFF')"><br>
-      <input type="button" id="vnap" value="" style="background:#FF0000;" onclick="vaihda_vari('#FF0000')">
-      <input type="button" id="vnap" value="" style="background:#FFFF00;" onclick="vaihda_vari('#FFFF00')">
-      <input type="button" id="vnap" value="" style="background:#00FF00;" onclick="vaihda_vari('#00FF00')">
-      <input type="button" id="vnap" value="" style="background:#00FFFF;" onclick="vaihda_vari('#00FFFF')">
-      <input type="button" id="vnap" value="" style="background:#0000FF;" onclick="vaihda_vari('#0000FF')">
-      <input type="button" id="vnap" value="" style="background:#FF00FF;" onclick="vaihda_vari('#FF00FF')"><br>
-      <input type="button" id="vnap" value="" style="background:#880000;" onclick="vaihda_vari('#880000')">
-      <input type="button" id="vnap" value="" style="background:#777700;" onclick="vaihda_vari('#777700')">
-      <input type="button" id="vnap" value="" style="background:#006600;" onclick="vaihda_vari('#006600')">
-      <input type="button" id="vnap" value="" style="background:#007777;" onclick="vaihda_vari('#007777')">
-      <input type="button" id="vnap" value="" style="background:#000088;" onclick="vaihda_vari('#000088')">
-      <input type="button" id="vnap" value="" style="background:#880088;" onclick="vaihda_vari('#880088')"><br>
-      <input type="button" id="vnap" value="" style="background:#FF80AA;" onclick="vaihda_vari('#FF80AA')">
-      <input type="button" id="vnap" value="" style="background:#FF8C1A;" onclick="vaihda_vari('#FF8C1A')">
-      <input type="button" id="vnap" value="" style="background:#663300;" onclick="vaihda_vari('#663300')">
-      <input type="button" id="vnap" value="" style="background:#FFD9B3;" onclick="vaihda_vari('#FFD9B3')">
-      <input type="button" id="vnap" value="" style="background:#111111;" onclick="vaihda_vari('#111111')">
-      <input type="button" id="vnap" value="" style="background:#CC33FF;" onclick="vaihda_vari('#CC33FF')"><br>
+      <input type="button" class="vnap" value="" style="background:#808080;" onclick="vaihda_vari('#808080')">
+      <input type="button" class="vnap" value="" style="background:#C0C0C0;" onclick="vaihda_vari('#C0C0C0')">
+      <input type="button" class="vnap" value="" style="background:#FFFFFF;" onclick="vaihda_vari('#FFFFFF')"><br>
+      <input type="button" class="vnap" value="" style="background:#FF0000;" onclick="vaihda_vari('#FF0000')">
+      <input type="button" class="vnap" value="" style="background:#FFFF00;" onclick="vaihda_vari('#FFFF00')">
+      <input type="button" class="vnap" value="" style="background:#00FF00;" onclick="vaihda_vari('#00FF00')">
+      <input type="button" class="vnap" value="" style="background:#00FFFF;" onclick="vaihda_vari('#00FFFF')">
+      <input type="button" class="vnap" value="" style="background:#0000FF;" onclick="vaihda_vari('#0000FF')">
+      <input type="button" class="vnap" value="" style="background:#FF00FF;" onclick="vaihda_vari('#FF00FF')"><br>
+      <input type="button" class="vnap" value="" style="background:#880000;" onclick="vaihda_vari('#880000')">
+      <input type="button" class="vnap" value="" style="background:#777700;" onclick="vaihda_vari('#777700')">
+      <input type="button" class="vnap" value="" style="background:#006600;" onclick="vaihda_vari('#006600')">
+      <input type="button" class="vnap" value="" style="background:#007777;" onclick="vaihda_vari('#007777')">
+      <input type="button" class="vnap" value="" style="background:#000088;" onclick="vaihda_vari('#000088')">
+      <input type="button" class="vnap" value="" style="background:#880088;" onclick="vaihda_vari('#880088')"><br>
+      <input type="button" class="vnap" value="" style="background:#FF80AA;" onclick="vaihda_vari('#FF80AA')">
+      <input type="button" class="vnap" value="" style="background:#FF8C1A;" onclick="vaihda_vari('#FF8C1A')">
+      <input type="button" class="vnap" value="" style="background:#663300;" onclick="vaihda_vari('#663300')">
+      <input type="button" class="vnap" value="" style="background:#FFD9B3;" onclick="vaihda_vari('#FFD9B3')">
+      <input type="button" class="vnap" value="" style="background:#111111;" onclick="vaihda_vari('#111111')">
+      <input type="button" class="vnap" value="" style="background:#CC33FF;" onclick="vaihda_vari('#CC33FF')"><br>
     </div>
     <div id="koords">
       X: <input type="text" name="MouseX" value="0" size="4"><br>
