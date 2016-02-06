@@ -60,7 +60,7 @@ function lopetapiirtovuoro(arvaaja) {
     setTimeout(function(){aloitapiirtovuoro();}, 3000);
   }
   else {
-    emittoi("** Entering ebin multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
+    emittoi("** Entering multiplayer free-draw mode since nobody wants to draw... If *YOU* want to draw, use the /draw command!");
     io.emit('draw', true);
   }
   send_users();
@@ -114,7 +114,7 @@ io.on('connection', function(socket){
     socket.emit('message', "** Now drawing: "+piirtaja);
   }
   else {
-    socket.emit('message', "** The game is in ebin multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
+    socket.emit('message', "** The game is in multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
   emittoi("** "+socket.username+" connected");
   console.log("from ip: "+socket.conn.remoteAddress);
