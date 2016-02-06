@@ -116,7 +116,8 @@ io.on('connection', function(socket){
   else {
     socket.emit('message', "** The game is in ebin multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
-  emittoi("** "+socket.username+" connected")
+  emittoi("** "+socket.username+" connected");
+  console.log("from ip: "+socket.conn.remoteAddress);
   lisaa_user(socket.username)
 
   socket.on('disconnect', function(){
