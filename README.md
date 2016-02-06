@@ -11,6 +11,7 @@ Work in progress...
 ##### KNOWN ISSUES:
 * serverin boottaamisen jälkeen ensimmäinen sana ei välttämättä näy piirtäjälle
 * pienillä resoluutioilla tekstikenttä ei näy
+* pitkät nimimerkit / liian monta nimimerkkiä userlistissa on no bueno
 * piirtäminen ei toimi selaimilla joissa vajaa html5-tuki (palemoon, edge, safari?, ie?, opera?)
 * liityttäessä peliin kesken piirtovuoron piirtoaika ei tule näkyviin (ei tärkeä)
 * piirtäjä voi arvata oman sanansa - feature, ei bugi. ei korjata
