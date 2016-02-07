@@ -52,19 +52,19 @@ function deklik(event) {
 }
 
 function aloita_piirto() {
-  if (Show.tool.value == "line") {
+  if ($('input[name="tool"]:checked').val() == "line") {
     piirt = 1;
   }
-  else if (Show.tool.value == "circle") {
+  else if ($('input[name="tool"]:checked').val() == "circle") {
     piirt = 2;
   }
-  else if (Show.tool.value == "oval") {
+  else if ($('input[name="tool"]:checked').val() == "oval") {
     piirt = 3;
   }
-  else if (Show.tool.value == "rect") {
+  else if ($('input[name="tool"]:checked').val() == "rect") {
     piirt = 4;
   }
-  else if (Show.tool.value == "freedraw") {
+  else if ($('input[name="tool"]:checked').val() == "freedraw") {
     freedraw_koords = [];
     freedraw();
     piirt = 5;
