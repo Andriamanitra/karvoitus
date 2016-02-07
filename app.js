@@ -154,7 +154,7 @@ io.on('connection', function(socket){
     }
     else if (data.split(" ")[0] == "nick") {
       var new_nick = data.split(" ")[1];
-      if (new_nick.length > 2 && new_nick.length <= 32) {
+      if (new_nick.length > 2 && new_nick.length <= 16) {
         var msg = "* " + socket.username + " is now known as " + new_nick;
         vaihda_user(socket.username, new_nick);
         socket.username = new_nick;
@@ -164,7 +164,7 @@ io.on('connection', function(socket){
       }
       else {
         socket.emit('nick', socket.username);
-        socket.emit('message', "** Nickname must be 3..32 characters!");
+        socket.emit('message', "** Nickname must be 3..16 characters!");
       }
     }
     else if (data == "draw"){

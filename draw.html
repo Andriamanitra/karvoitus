@@ -92,6 +92,7 @@
   var timestamps = false;
   var sekunnit;
   var piirtoaikalaskuri;
+  var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 
   function piirtovuoroon() {
     document.getElementById("tools").innerHTML = tools;
@@ -138,6 +139,7 @@
   }
 
   piirtovuoroon();
+  if (!is_chrome) {$('#messages').append($('<li>').text("** Chromium-based web browser such as Google Chrome is recommended for playing this game"));}
 
   var socket = io();
   $('#nick').change(function(){
@@ -146,7 +148,7 @@
   $('form').submit(function(){
     var msg_val = $('#msg').val()
     if (msg_val[0] == '/') {
-      if (msg_val.slice(1) == "timestamp") { 
+      if (msg_val.slice(1) == "timestamp") {
         toggle_timestamp();
       }
       else {

@@ -52,19 +52,20 @@ function deklik(event) {
 }
 
 function aloita_piirto() {
-  if ($('input[name="tool"]:checked').val() == "line") {
+  var duunikalu = $('input[name="tool"]:checked').val();
+  if (duunikalu == "line") {
     piirt = 1;
   }
-  else if ($('input[name="tool"]:checked').val() == "circle") {
+  else if (duunikalu == "circle") {
     piirt = 2;
   }
-  else if ($('input[name="tool"]:checked').val() == "oval") {
+  else if (duunikalu == "oval") {
     piirt = 3;
   }
-  else if ($('input[name="tool"]:checked').val() == "rect") {
+  else if (duunikalu == "rect") {
     piirt = 4;
   }
-  else if ($('input[name="tool"]:checked').val() == "freedraw") {
+  else if (duunikalu == "freedraw") {
     freedraw_koords = [];
     freedraw();
     piirt = 5;
