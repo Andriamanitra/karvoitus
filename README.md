@@ -4,7 +4,6 @@
 Work in progress...
 
 #### **MONSTER** NICE IDEAS
-* ALPHA VALUE
 * MONTA PIIRTÄJÄÄ SAMALLA PIIRTOVUOROLLA
 * IRC-INTEGRAATIO
 * Login / jonkinasteinen nimimerkin suojaus?

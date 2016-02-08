@@ -50,6 +50,9 @@ function deklik(event) {
     }
   }
 }
+function hae_c_a_w() {
+  return [Show.Color.value, Show.Alpha.value, Show.Width.value];
+}
 
 function aloita_piirto() {
   var duunikalu = $('input[name="tool"]:checked').val();
@@ -113,7 +116,7 @@ function tallenna_line() {
     x = x-(Show.MouseX.value-x);
     y = y-(Show.MouseY.value-y);
   }
-  muodot.push(["line", x, y, Show.MouseX.value, Show.MouseY.value, Show.Color.value, Show.Width.value]);
+  muodot.push(["line", x, y, Show.MouseX.value, Show.MouseY.value, hae_c_a_w()]);
   piirt = 0;
 };
 
@@ -121,13 +124,13 @@ function tallenna_circle() {
   var r;
   if (Show.Mid.checked) {
     r = Math.sqrt(Math.pow(Show.MouseX.value-x, 2)+Math.pow(Show.MouseY.value-y, 2));
-    muodot.push(["circle", x, y, r, Show.Color.value, Show.Width.value, Show.Fill.checked]);
+    muodot.push(["circle", x, y, r, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
     r = Math.sqrt( Math.pow((Show.MouseX.value-x)/2, 2) + Math.pow((Show.MouseY.value-y)/2, 2));
     x = (parseFloat(Show.MouseX.value)+parseFloat(x))/2;
     y = (parseFloat(Show.MouseY.value)+parseFloat(y))/2;
-    muodot.push(["circle", x, y, r, Show.Color.value, Show.Width.value, Show.Fill.checked]);
+    muodot.push(["circle", x, y, r, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
 }
@@ -139,7 +142,7 @@ function tallenna_oval() {
     y1 = Show.MouseY.value;
     lev = 1.33*Math.abs(2*(x1-x));
     kork = Math.abs(2*(y1-y));
-    muodot.push(["oval", x, y, 1.39*lev, 1.39*kork, Show.Color.value, Show.Width.value, Show.Fill.checked]);
+    muodot.push(["oval", x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
     x1 = Show.MouseX.value;
@@ -148,7 +151,7 @@ function tallenna_oval() {
     kork = Math.abs(y1-y);
     x_kesk = Math.abs(-x1-x)/2;
     y_kesk = Math.abs(-y1-y)/2;
-    muodot.push(["oval", x_kesk, y_kesk, lev, kork, Show.Color.value, Show.Width.value, Show.Fill.checked]);
+    muodot.push(["oval", x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
 }
@@ -162,10 +165,10 @@ function tallenna_rect() {
   if (Show.Mid.checked) {
     lev = 2*lev;
     kork = 2*kork;
-    muodot.push(["rect", x-Math.abs(x1-x), y-Math.abs(y1-y), lev, kork, Show.Color.value, Show.Width.value, Show.Fill.checked]);
+    muodot.push(["rect", x-Math.abs(x1-x), y-Math.abs(y1-y), lev, kork, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
-    muodot.push(["rect", Math.min(x, x1), Math.min(y, y1), lev, kork, Show.Color.value, Show.Width.value, Show.Fill.checked]);
+    muodot.push(["rect", Math.min(x, x1), Math.min(y, y1), lev, kork, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
 }
@@ -173,7 +176,7 @@ function tallenna_rect() {
 function tallenna_free() {
   freedraw_koords.push(Show.MouseX.value);
   freedraw_koords.push(Show.MouseY.value);
-  muodot.push(["free", freedraw_koords, Show.Color.value, Show.Width.value]);
+  muodot.push(["free", freedraw_koords, hae_c_a_w()]);
   refrsh();
   piirt = 0;
 }
@@ -198,7 +201,7 @@ function piirra_muodot() {
   }
 }
 
-function piirra_line(x_alku, y_alku, x_loppu, y_loppu, vari, paks) {
+function piirra_line(x_alku, y_alku, x_loppu, y_loppu, caw) {
   vari = typeof vari !== 'undefined' ? vari : "#000000";
   x_alku -= padd;
   y_alku -= padd;
@@ -207,31 +210,35 @@ function piirra_line(x_alku, y_alku, x_loppu, y_loppu, vari, paks) {
   context.beginPath();
   context.moveTo(x_alku, y_alku);
   context.lineTo(x_loppu, y_loppu);
-  context.strokeStyle = vari;
-  context.lineWidth=paks;
+  context.strokeStyle = caw[0];
+  context.globalAlpha = caw[1];
+  context.lineWidth = caw[2];
   context.stroke();
   context.closePath();
 }
 
-function piirra_circle(x_keskip, y_keskip, r, vari, paks, fill) {
+function piirra_circle(x_keskip, y_keskip, r, caw, fill) {
   vari = typeof vari !== 'undefined' ? vari : "#000000";
   x_keskip -= padd;
   y_keskip -= padd;
   context.beginPath();
   context.arc(x_keskip, y_keskip, r, 0, 2*Math.PI);
   if (fill) {
-    context.fillStyle = vari;
+    context.fillStyle = caw[0];
+    context.globalAlpha = caw[1];
+    context.lineWidth = caw[2];
     context.fill();
   }
   else {
-    context.strokeStyle = vari;
-    context.lineWidth=paks;
+    context.strokeStyle = caw[0];
+    context.globalAlpha = caw[1];
+    context.lineWidth = caw[2];
     context.stroke();
   }
   context.closePath();
 }
 
-function piirra_oval(x_keskip, y_keskip, lev, kork, vari, paks, fill) {
+function piirra_oval(x_keskip, y_keskip, lev, kork, caw, fill) {
   x_keskip -= padd;
   y_keskip -= padd;
   x_keskip = parseFloat(x_keskip);
@@ -254,35 +261,42 @@ function piirra_oval(x_keskip, y_keskip, lev, kork, vari, paks, fill) {
     x_keskip, y_keskip - kork/2); // A1
 
   if (fill) {
-    context.fillStyle = vari;
+    context.fillStyle = caw[0];
+    context.globalAlpha = caw[1];
+    context.lineWidth = caw[2];
     context.fill();
   }
   else {
-    context.strokeStyle = vari;
-    context.lineWidth=paks;
+    context.strokeStyle = caw[0];
+    context.globalAlpha = caw[1]
+    context.lineWidth = caw[2];
     context.stroke();
   }
   context.closePath();
 }
 
-function piirra_rect(x0, y0, lev, kork, vari, paks, fill) {
+function piirra_rect(x0, y0, lev, kork, caw, fill) {
   context.beginPath();
   context.rect(x0-padd, y0-padd, lev, kork);
   if (fill) {
-    context.fillStyle = vari;
+    context.fillStyle = caw[0];
+    context.globalAlpha = caw[1];
+    context.lineWidth = caw[2];
     context.fill();
   }
   else {
-    context.strokeStyle = vari;
-    context.lineWidth=paks;
+    context.strokeStyle = caw[0];
+    context.globalAlpha = caw[1];
+    context.lineWidth = caw[2];
     context.stroke();
   }
   context.closePath();
 }
 
-function piirra_free(koordlist, vari, paks) {
-  context.strokeStyle = vari;
-  context.lineWidth = paks;
+function piirra_free(koordlist, caw) {
+  context.strokeStyle = caw[0];
+  context.globalAlpha = caw[1];
+  context.lineWidth = caw[2];
   context.beginPath();
   context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
   for(i = 2; i < koordlist.length; i=i+2) {
@@ -301,26 +315,26 @@ function tempPiirto() {
   if (piirt == 1) {
     refrsh();
     if (Show.Mid.checked) {
-      piirra_line(x-(tempX-x), y-(tempY-y), tempX, tempY, Show.Color.value, Show.Width.value);
+      piirra_line(x-(tempX-x), y-(tempY-y), tempX, tempY, hae_c_a_w());
     }
     else {
-      piirra_line(x, y, tempX, tempY, Show.Color.value, Show.Width.value);
+      piirra_line(x, y, tempX, tempY, hae_c_a_w());
     }
   }
   else if (piirt == 2) {
     refrsh();
     if (Show.Mid.checked) {
       var r = Math.sqrt(Math.pow(Show.MouseX.value-x, 2)+Math.pow(Show.MouseY.value-y, 2));
-      piirra_circle(x, y, r, Show.Color.value, Show.Width.value, Show.Fill.checked);
+      piirra_circle(x, y, r, hae_c_a_w(), Show.Fill.checked);
     }
     else {
       var r = Math.sqrt( Math.pow((Show.MouseX.value-x)/2, 2) + Math.pow((Show.MouseY.value-y)/2, 2)),
       x_keskip = (parseFloat(Show.MouseX.value)+parseFloat(x))/2,
       y_keskip = (parseFloat(Show.MouseY.value)+parseFloat(y))/2;
-      piirra_circle(x_keskip, y_keskip, r, Show.Color.value, Show.Width.value, Show.Fill.checked);
+      piirra_circle(x_keskip, y_keskip, r, hae_c_a_w(), Show.Fill.checked);
     }
     context.setLineDash([5]);
-    piirra_line(x, y, tempX, tempY, apuviivacolor, 1);
+    piirra_line(x, y, tempX, tempY, [apuviivacolor, 1, 1], 1);
     context.setLineDash([]);
   }
   else if (piirt == 3) {
@@ -328,9 +342,9 @@ function tempPiirto() {
     if (Show.Mid.checked) {
       var lev = 1.33*Math.abs(2*(tempX-x)),
       kork = Math.abs(2*(tempY-y));
-      piirra_oval(x, y, 1.39*lev, 1.39*kork, Show.Color.value, Show.Width.value, Show.Fill.checked);
+      piirra_oval(x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked);
       context.setLineDash([5]);
-      piirra_line(x, y, tempX, tempY, apuviivacolor, 1);
+      piirra_line(x, y, tempX, tempY, [apuviivacolor, 1, 1], 1);
       context.setLineDash([]);
     }
     else {
@@ -344,21 +358,21 @@ function tempPiirto() {
       kork = Math.abs(tempY-y),
       x_kesk = Math.abs(-tempX-x)/2,
       y_kesk = Math.abs(-tempY-y)/2;
-      piirra_oval(x_kesk, y_kesk, lev, kork, Show.Color.value, Show.Width.value, Show.Fill.checked);
+      piirra_oval(x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked);
     }
   }
   else if (piirt == 4) {
     refrsh();
     if (Show.Mid.checked) {
-      piirra_rect(x-Math.abs(tempX-x), y-Math.abs(tempY-y), 2*Math.abs(x-tempX), 2*Math.abs(y-tempY), Show.Color.value, Show.Width.value, Show.Fill.checked);
+      piirra_rect(x-Math.abs(tempX-x), y-Math.abs(tempY-y), 2*Math.abs(x-tempX), 2*Math.abs(y-tempY), hae_c_a_w(), Show.Fill.checked);
     }
     else {
-      piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), Show.Color.value, Show.Width.value, Show.Fill.checked);
+      piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), hae_c_a_w(), Show.Fill.checked);
     }
   }
   else if (piirt == 5) {
     refrsh();
-    piirra_free(freedraw_koords, Show.Color.value, Show.Width.value);
+    piirra_free(freedraw_koords, hae_c_a_w());
   }
 }
 

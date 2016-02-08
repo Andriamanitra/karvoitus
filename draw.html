@@ -5,6 +5,18 @@
   <link rel="stylesheet" type="text/css" href="draw.css">
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    function downloadCanvas() {
+      var dlLink = document.createElement('a');
+      var aikanyt = new Date();
+      var aikastring = aikanyt.getFullYear()+"-"+(addz(aikanyt.getMonth()+1))+"-"+addz(aikanyt.getDate());
+      dlLink.download = "karvoitus-"+aikastring+".png";
+      dlLink.href = document.getElementById('drawzone').toDataURL('image/png');
+      document.body.appendChild(dlLink);
+      dlLink.click();
+      document.body.removeChild(dlLink);
+    }
+  </script>
   <title>Karvoituspeli</title>
 </head>
 <body onresize="set_offsets()">
@@ -34,11 +46,14 @@
           }
       </style>
       <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
-      <input type="button" value="Clear" onclick="socket.emit('command', 'clear')"><br>
+      <input type="button" value="Clear" onclick="socket.emit('command', 'clear')">
+      <input type="button" value="Save image" onclick="downloadCanvas()"><br>
       <input type="checkbox" name="Mid" value="true"> Start shape from center<br>
       <input type="checkbox" name="Fill" value="true"> Fill<br>
       Line width<br>
-      <input type="range" name="Width" style="cursor: pointer" value=1 min=1 max=80>
+      <input type="range" name="Width" style="cursor: pointer" value=1 min=1 max=80><br>
+      Alpha<br>
+      <input type="range" name="Alpha" style="cursor: pointer" value=1 step=0.05 min=0 max=1>
     </div>
     <div class="tools_sarake">
       <div id="vval-div"><input type="color" id="vval" name="Color" value="#000000"></div>
