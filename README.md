@@ -20,7 +20,6 @@ Work in progress...
   * fill
   * kolmiot?
 * parempi työkalujen ja värien valinta
-* piirtovuorolista
 * kehitä sanalistaa (mahdollisuus valita mitä sanaluokkaa piirtää?)
 * erilliset pelihuoneet (alhainen prioriteetti)
 * järkevöitä koodia: look into context save & restore
