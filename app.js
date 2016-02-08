@@ -16,6 +16,7 @@ var muodot = [];
 var userlist = [];
 var piirtovuorot = [];
 var piirtovuorotimeout;
+var piirtovuorotime;
 var sana = "";
 var piirtaja = "";
 
@@ -41,8 +42,10 @@ function aloitapiirtovuoro() {
   }, 5);
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   io.emit('drawtime', vuoron_pituus/1000);
+  var nyt = new Date();
+  piirtovuorotime = nyt.getTime() + vuoron_pituus;
   piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
-};
+}
 
 function lopetapiirtovuoro(arvaaja) {
   clearTimeout(piirtovuorotimeout);
@@ -64,7 +67,14 @@ function lopetapiirtovuoro(arvaaja) {
     io.emit('draw', true);
   }
   send_users();
-};
+}
+
+function piirtoaikaaLeft() {
+  console.log(piirtovuorotime);
+  var nyt = new Date();
+  console.log(nyt.getTime());
+  return Math.ceil((piirtovuorotime-nyt.getTime())/1000);
+}
 
 function emittoi(msg) {
   io.emit('message', msg);
@@ -111,6 +121,7 @@ io.on('connection', function(socket){
   socket.emit('muodot', muodot);
   if (piirtovuorot.length > 0) {
     socket.emit('draw', false);
+    socket.emit('drawtime', piirtoaikaaLeft()); //doesnt work as of yet
     socket.emit('message', "** Now drawing: "+piirtaja);
   }
   else {
@@ -189,7 +200,7 @@ io.on('connection', function(socket){
       if (muod.length > muodot_max_length) {
         muodot = muod.slice(muod.length-muodot_max_length);
       }
-      else { 
+      else {
         muodot = muod;
       }
       io.emit('muodot', muodot);
