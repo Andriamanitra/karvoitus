@@ -1,6 +1,6 @@
 {
   "name": "karvoitus",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "mun eka node.js jutska :3 elikkä karvoitus",
   "main": "app.js",
   "scripts": {
