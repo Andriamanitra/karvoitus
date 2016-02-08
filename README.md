@@ -20,4 +20,6 @@ Work in progress...
 * parempi työkalujen ja värien valinta
 * kehitä sanalistaa (mahdollisuus valita mitä sanaluokkaa piirtää?)
 * erilliset pelihuoneet (alhainen prioriteetti)
-* järkevöitä koodia: look into context save & restore
+* järkevöitä koodia:
+  * look into context save & restore
+  * siirrä koodit draw.html -> draw.js
