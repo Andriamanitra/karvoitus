@@ -11,6 +11,7 @@ Work in progress...
 ##### KNOWN ISSUES:
 * serverin boottaamisen jälkeen ensimmäinen sana ei välttämättä näy piirtäjälle
 * piirtäminen ei toimi selaimilla joissa vajaa html5-tuki (edge, safari?, ie?, opera?)
+  * HTML5 input type=color ei tuettu kovin laajalti, oma värinvalitsin tilalle?
 * piirtäjä voi arvata oman sanansa - feature, ei bugi. ei korjata
 
 ##### TODO LIST:
@@ -22,4 +23,4 @@ Work in progress...
 * erilliset pelihuoneet (alhainen prioriteetti)
 * järkevöitä koodia:
   * look into context save & restore
-  * siirrä koodit draw.html -> draw.js
+  * piirtohommat voisi varmasti jäsennellä fiksumminkin
