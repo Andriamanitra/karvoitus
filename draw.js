@@ -1,27 +1,116 @@
-var drawzone = document.getElementById('drawzone'),
-    frameLeft = drawframe.offsetLeft,
-    frameTop = drawframe.offsetTop,
-    context = drawzone.getContext('2d'),
-    apuviivacolor = "#C0C0C0",
-    x = 0,
-    y = 0,
-    piirt = 0,
-    padd = 50,
-    muodot = [];
+drawzone = document.getElementById('drawzone'),
+drawframe = document.getElementById('drawframe'),
+frameLeft = drawframe.offsetLeft,
+frameTop = drawframe.offsetTop,
+context = drawzone.getContext('2d'),
+tools = document.getElementById("tools").innerHTML,
+apuviivacolor = "#C0C0C0",
+x = 0,
+y = 0,
+piirt = 0,
+padd = 50,
+timestamps = true,
+context.lineCap = "round",
+context.lineJoin = "round",
+muodot = [];
+
+document.getElementById("drawzone").addEventListener("mousemove", getMouseXY);
 
 drawframe.addEventListener('contextmenu', function(rightclick) {
     rightclick.preventDefault();
     return false;
 }, false);
 
+var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+if (!is_chrome) {$('#messages').append($('<li>').text("** Chromium-based web browser such as Google Chrome is recommended for playing this game"));}
+
+// socket.io alustus:
+socket = io();
+
+// ################## socket-eventit: #######################
+
+// serverin ilmoitukset ja tavalliset chat-viestit
+socket.on('message', function(msg){
+  if (timestamps) {
+    msg = timestamp()+msg;
+  }
+  $('#messages').append($('<li>').text(msg));
+  $('#messages').scrollTop($('#messages')[0].scrollHeight);
+});
+
+// serveri kertoo mikä on tämän hetkinen nick
+// esim. nickin vaihdon epäonnistuttua
+socket.on('nick', function(newnick){
+  $('#nick').val(newnick);
+});
+
+// serveri kertoo mitä kuvassa on
+socket.on('muodot', function(muod){
+  muodot = muod;
+  refrsh();
+});
+
+// serveri kertoo oletko piirtovuorossa:
+// jos et, piilotetaan työkalut (serveri
+// ei kuitenkaan hyväksyisi piirtoja jos
+// ei ole piirtovuorossa)
+socket.on('draw', function(asdfg){
+  if (asdfg) {
+    piirtovuoroon();
+  }
+  else {
+    piirtovuorosta();
+  }
+});
+
+// serveri kertoo piirtovuoron alussa tai
+// uuden käyttäjän liittyessä jäljellä olevan
+// piirtoajan
+socket.on('drawtime', function(draw_t){
+  if (draw_t != "") {
+    var sekunnit = draw_t+1;
+    piirtoaika_tick(sekunnit);
+  }
+  else {
+    clearTimeout(piirtoaikalaskuri);
+    $('#piirtoaika').html("");
+  }
+});
+
+// serveri kertoo paikalla olevat käyttäjät
+// muodossa [[piirtovuoro, nick], ..., [piirtovuoro, nick]]
+socket.on('users', function(userlista){
+  $('#users tbody tr').remove();
+  for (var i = 0; i < userlista.length; i++) {
+    var row = document.getElementById('users').insertRow(0);
+    row.insertCell(0).innerHTML = userlista[i][0];
+    row.insertCell(1).innerHTML = userlista[i][1];
+  }
+});
+// ################## </socket-eventit> ########################
+
+
+// tallentaa html5-canvaksen sisältö .png-tiedostona
+function downloadCanvas() {
+  // luo uuden linkin, klikkaa sitä, ja poistaa sen saman tien
+  var dlLink = document.createElement('a');
+  var aikanyt = new Date();
+  var aikastring = aikanyt.getFullYear()+"-"+(addz(aikanyt.getMonth()+1))+"-"+addz(aikanyt.getDate());
+  dlLink.download = "karvoitus-"+aikastring+".png";
+  dlLink.href = document.getElementById('drawzone').toDataURL('image/png');
+  document.body.appendChild(dlLink);
+  dlLink.click();
+  document.body.removeChild(dlLink);
+}
+
 function set_offsets() {
-	frameLeft = drawframe.offsetLeft,
-	frameTop = drawframe.offsetTop;
-	refrsh();
+  frameLeft = drawframe.offsetLeft,
+  frameTop = drawframe.offsetTop;
+  refrsh();
 };
 
 function vaihda_vari(uusi_vari) {
-	Show.Color.value = uusi_vari;
+  Show.Color.value = uusi_vari;
 }
 
 function klik(event) {
@@ -50,6 +139,8 @@ function deklik(event) {
     }
   }
 }
+
+// [color, alpha, width]
 function hae_c_a_w() {
   return [Show.Color.value, Show.Alpha.value, Show.Width.value];
 }
@@ -82,7 +173,7 @@ function freedraw() {
     freedraw_koords.push(Show.MouseY.value);
   }
 
-  if (freedraw_koords.length >= 1000) {
+  if (freedraw_koords.length >= 2000) {
     tallenna_free();
   }
   else {
@@ -376,12 +467,6 @@ function tempPiirto() {
   }
 }
 
-context.lineCap = "round";
-context.lineJoin = "round";
-
-
-document.getElementById("drawzone").addEventListener("mousemove", getMouseXY);
-
 
 // modifioitua lainacoodia
 // Temporary variables to hold mouse x-y pos.s
@@ -408,3 +493,70 @@ function getMouseXY(e) {
   document.Show.MouseY.value = tempY
   return true
 }
+
+function piirtovuoroon() {
+  document.getElementById("tools").innerHTML = tools;
+  document.onmousemove = getMouseXY;
+  document.getElementById("drawframe").onmousedown = klik;
+  document.getElementById("drawframe").onmouseup = deklik;
+}
+
+function piirtovuorosta() {
+  document.onmousemove = "";
+  document.getElementById("drawframe").onmousedown = "";
+  document.getElementById("drawframe").onmouseup = "";
+  document.getElementById("tools").innerHTML = "";
+}
+
+function toggle_timestamp() {
+  if (timestamps) {
+    timestamps = false;
+  }
+  else {
+    timestamps = true;
+  }
+}
+
+function addz(x) {
+  if (x < 10) {
+    return "0"+x;
+  }
+  return x;
+}
+
+function timestamp() {
+  var d = new Date();
+  var timestring = addz(d.getHours())+":"+addz(d.getMinutes())+":"+addz(d.getSeconds());
+  return "["+timestring+"] ";
+}
+
+function piirtoaika_tick(sekunnit) {
+  console.log(sekunnit);
+  sekunnit = sekunnit-1;
+  var mins = Math.floor(sekunnit/60);
+  var seks = addz(sekunnit%60);
+  $('#piirtoaika').html(mins+":"+seks);
+  piirtoaikalaskuri = setTimeout(function() {piirtoaika_tick(sekunnit);}, 1000);
+}
+
+// Nickinvaihto
+$('#nick').change(function(){
+  socket.emit('command', "nick "+$('#nick').val());
+});
+// Tekstikenttä
+$('form').submit(function(){
+  var msg_val = $('#msg').val()
+  if (msg_val[0] == '/') {
+    if (msg_val.slice(1) == "timestamp") {
+      toggle_timestamp();
+    }
+    else {
+      socket.emit('command', msg_val.slice(1));
+    }
+  }
+  else {
+    socket.emit('chat message', msg_val );
+  }
+  $('#msg').val('');
+  return false;
+});

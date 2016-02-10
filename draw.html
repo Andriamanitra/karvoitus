@@ -5,18 +5,6 @@
   <link rel="stylesheet" type="text/css" href="draw.css">
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-  <script>
-    function downloadCanvas() {
-      var dlLink = document.createElement('a');
-      var aikanyt = new Date();
-      var aikastring = aikanyt.getFullYear()+"-"+(addz(aikanyt.getMonth()+1))+"-"+addz(aikanyt.getDate());
-      dlLink.download = "karvoitus-"+aikastring+".png";
-      dlLink.href = document.getElementById('drawzone').toDataURL('image/png');
-      document.body.appendChild(dlLink);
-      dlLink.click();
-      document.body.removeChild(dlLink);
-    }
-  </script>
   <title>Karvoituspeli</title>
 </head>
 <body onresize="set_offsets()">
@@ -40,11 +28,6 @@
       <input type="radio" name="tool" value="rect"> Rectangle<br>
     </div>
     <div class="tools_sarake">
-      <style scoped>
-          .button-xsmall {
-              font-size: 70%;
-          }
-      </style>
       <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
       <input type="button" value="Clear" onclick="socket.emit('command', 'clear')">
       <input type="button" value="Save image" onclick="downloadCanvas()"><br>
@@ -100,123 +83,11 @@
   </form>
 </div>
 
+<!--
+After everything is loaded get the javascript,
+this way there should be no errors
+-->
 <script src="draw.js"></script>
-
-<script>
-  var tools = document.getElementById("tools").innerHTML;
-  var timestamps = false;
-  var sekunnit;
-  var piirtoaikalaskuri;
-  var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-
-  function piirtovuoroon() {
-    document.getElementById("tools").innerHTML = tools;
-    document.onmousemove = getMouseXY;
-    document.getElementById("drawframe").onmousedown = klik;
-    document.getElementById("drawframe").onmouseup = deklik;
-  }
-
-  function piirtovuorosta() {
-    document.onmousemove = "";
-    document.getElementById("drawframe").onmousedown = "";
-    document.getElementById("drawframe").onmouseup = "";
-    document.getElementById("tools").innerHTML = "";
-  }
-
-  function toggle_timestamp() {
-    if (timestamps) {
-      timestamps = false;
-    }
-    else {
-      timestamps = true;
-    }
-  }
-
-  function addz(x) {
-    if (x < 10) {
-      return "0"+x;
-    }
-    return x;
-  }
-
-  function timestamp() {
-    var d = new Date();
-    var timestring = addz(d.getHours())+":"+addz(d.getMinutes())+":"+addz(d.getSeconds());
-    return "["+timestring+"] ";
-  }
-
-  function piirtoaika_tick() {
-    sekunnit = sekunnit-1;
-    var mins = Math.floor(sekunnit/60);
-    var seks = addz(sekunnit%60);
-    $('#piirtoaika').html(mins+":"+seks);
-    piirtoaikalaskuri = setTimeout(piirtoaika_tick, 1000);
-  }
-
-  piirtovuoroon();
-  if (!is_chrome) {$('#messages').append($('<li>').text("** Chromium-based web browser such as Google Chrome is recommended for playing this game"));}
-
-  var socket = io();
-  $('#nick').change(function(){
-    socket.emit('command', "nick "+$('#nick').val());
-  });
-  $('form').submit(function(){
-    var msg_val = $('#msg').val()
-    if (msg_val[0] == '/') {
-      if (msg_val.slice(1) == "timestamp") {
-        toggle_timestamp();
-      }
-      else {
-        socket.emit('command', msg_val.slice(1));
-      }
-    }
-    else {
-      socket.emit('chat message', msg_val );
-    }
-    $('#msg').val('');
-    return false;
-  });
-  socket.on('message', function(msg){
-    if (timestamps) {
-      msg = timestamp()+msg;
-    }
-    $('#messages').append($('<li>').text(msg));
-    $('#messages').scrollTop($('#messages')[0].scrollHeight);
-  });
-  socket.on('nick', function(newnick){
-    $('#nick').val(newnick);
-  });
-  socket.on('muodot', function(muod){
-    muodot = muod;
-    refrsh();
-  });
-  socket.on('draw', function(asdfg){
-    if (asdfg) {
-      piirtovuoroon();
-    }
-    else {
-      piirtovuorosta();
-    }
-  });
-  socket.on('drawtime', function(draw_t){
-    if (draw_t != "") {
-      sekunnit = draw_t+1;
-      piirtoaika_tick();
-    }
-    else {
-      clearTimeout(piirtoaikalaskuri);
-      $('#piirtoaika').html("");
-    }
-  });
-  socket.on('users', function(userlista){
-    $('#users tbody tr').remove();
-    for (var i = 0; i < userlista.length; i++) {
-      var row = document.getElementById('users').insertRow(0);
-      row.insertCell(0).innerHTML = userlista[i][0];
-      row.insertCell(1).innerHTML = userlista[i][1];
-    }
-  })
-</script>
 
 </body>
 </html>
