@@ -10,8 +10,8 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/draw.html');
 });
 var anoncount = 0;
-var muodot_max_length = 300;
-var vuoron_pituus = 180000; // millisekunteina
+var muodot_max_length = 500;
+var vuoron_pituus = 120000; // millisekunteina
 var muodot = [];
 var userlist = [];
 var piirtovuorot = [];
