@@ -174,10 +174,7 @@ function freedraw() {
   }
 
   if (freedraw_koords.length >= 2000) {
-    tallenna_free();
-  }
-  else {
-    freedraw_timeout = setTimeout(freedraw, 5);
+    viimeistele_piirto();
   }
 }
 
@@ -195,7 +192,6 @@ function viimeistele_piirto() {
     tallenna_rect();
   }
   else if (piirt == 5) {
-    clearTimeout(freedraw_timeout);
     tallenna_free();
   }
   socket.emit('muodot', muodot);
@@ -265,8 +261,6 @@ function tallenna_rect() {
 }
 
 function tallenna_free() {
-  freedraw_koords.push(Show.MouseX.value);
-  freedraw_koords.push(Show.MouseY.value);
   muodot.push(["free", freedraw_koords, hae_c_a_w()]);
   refrsh();
   piirt = 0;
@@ -491,6 +485,10 @@ function getMouseXY(e) {
   // in the text fields named MouseX and MouseY
   document.Show.MouseX.value = tempX
   document.Show.MouseY.value = tempY
+
+  if (piirt == 5) {
+    freedraw()
+  }
   return true
 }
 
