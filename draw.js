@@ -14,7 +14,7 @@ context.lineCap = "round",
 context.lineJoin = "round",
 muodot = [];
 
-document.getElementById("drawzone").addEventListener("mousemove", getMouseXY);
+document.getElementById("drawframe").addEventListener("mousemove", getMouseXY);
 
 drawframe.addEventListener('contextmenu', function(rightclick) {
     rightclick.preventDefault();
