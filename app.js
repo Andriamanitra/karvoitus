@@ -127,9 +127,10 @@ io.on('connection', function(socket){
   else {
     socket.emit('message', "** The game is in multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
-  emittoi("** "+socket.username+" connected");
-  console.log("from ip: "+socket.conn.remoteAddress);
+  io.emit('message', "** "+socket.username+" connected");
+  console.log("** "+socket.username+" connected from ip: "+socket.conn.remoteAddress);
   lisaa_user(socket.username)
+
 
   socket.on('disconnect', function(){
     console.log(socket.username+' disconnected');
@@ -153,8 +154,8 @@ io.on('connection', function(socket){
       lopetapiirtovuoro(socket.username);
     }
   });
+
   socket.on('command', function(data){
-    console.log("command: '"+data+"' by "+socket.username);
     if (data == "clear"){
       muodot = [];
       io.emit('muodot', muodot);
@@ -195,6 +196,7 @@ io.on('connection', function(socket){
       }
     }
   });
+
   socket.on('muodot', function(muod){
     if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
       if (muod.length > muodot_max_length) {
