@@ -113,11 +113,31 @@ function vaihda_vari(uusi_vari) {
   Show.Color.value = uusi_vari;
 }
 
+// lainafunktio
+function rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255)
+        throw "Invalid color component";
+    return ((r << 16) | (g << 8) | b).toString(16);
+}
+
 function klik(event) {
   // right click; peruuttaa nykyisen piirron
   if (event.button == 2) {
     piirt = 0;
     refrsh();
+  }
+  // middle click; värivalitsin
+  else if (event.button == 1) {
+    event.preventDefault();
+    var pixel = context.getImageData(Show.MouseX.value-padd, Show.MouseY.value-padd, 1, 1).data;
+    var alpha = pixel[3]/255;
+
+    // blendataan jotta värivalitsin ottaa oikean värin myös pikseleissä
+    // joissa alpha < 255; 255 255 255 koska taustaväri on valkoinen.
+    pixel[0]=pixel[0]*alpha + 255*(1.0-alpha)
+    pixel[1]=pixel[1]*alpha + 255*(1.0-alpha)
+    pixel[2]=pixel[2]*alpha + 255*(1.0-alpha)
+    vaihda_vari("#"+("000000"+rgbToHex(pixel[0], pixel[1], pixel[2])).slice(-6));
   }
   // muu klik; aloitetaan piirto
   else if (piirt == 0) {
