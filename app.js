@@ -36,10 +36,10 @@ function aloitapiirtovuoro() {
   io.emit('draw', false);
   hae_sana();
   setTimeout(function(){
-    console.log("** "+piirtaja+" is drawing "+sana);
+    console.log(timestamp()+"** "+piirtaja+" is drawing "+sana);
     io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
     io.to(piirtaja_id).emit('draw', true);
-  }, 5);
+  }, 50);
   io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
   io.emit('drawtime', vuoron_pituus/1000);
   var nyt = new Date();
@@ -78,7 +78,7 @@ function piirtoaikaaLeft() {
 
 function emittoi(msg) {
   io.emit('message', msg);
-  console.log(msg);
+  console.log(timestamp()+msg);
 }
 
 function poista_user(poistettava) {
@@ -114,6 +114,19 @@ function send_users() {
   io.emit('users', usertable.reverse());
 }
 
+function addz(x) {
+  if (x < 10) {
+    return "0"+x;
+  }
+  return x;
+}
+
+function timestamp() {
+  var d = new Date();
+  var timestring = addz(d.getHours())+":"+addz(d.getMinutes())+":"+addz(d.getSeconds());
+  return "["+timestring+"] ";
+}
+
 io.on('connection', function(socket){
   socket.username = "~anon"+("0000"+anoncount).slice(-4);
   anoncount += 1;
@@ -128,12 +141,12 @@ io.on('connection', function(socket){
     socket.emit('message', "** The game is in multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
   io.emit('message', "** "+socket.username+" connected");
-  console.log("** "+socket.username+" connected from ip: "+socket.conn.remoteAddress);
+  console.log(timestamp()+"** "+socket.username+" connected from ip: "+socket.conn.remoteAddress);
   lisaa_user(socket.username)
 
 
   socket.on('disconnect', function(){
-    console.log(socket.username+' disconnected');
+    console.log(timestamp()+socket.username+' disconnected');
     io.emit('message', "** "+socket.username+" disconnected");
     var ind = piirtovuorot.indexOf(socket.id);
     if (ind > -1) {
@@ -191,7 +204,7 @@ io.on('connection', function(socket){
         }
         else {
           socket.emit('message', "** You have been added to draw Q");
-          console.log("** "+socket.username+" was added to draw Q");
+          console.log(timestamp()+"** "+socket.username+" was added to draw Q");
         }
       }
     }
