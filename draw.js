@@ -589,7 +589,9 @@ $('form').submit(function(){
     }
   }
   else {
-    socket.emit('chat message', msg_val );
+    if (msg_val != "") {
+      socket.emit('chat message', msg_val );
+    }
   }
   $('#msg').val('');
   return false;
