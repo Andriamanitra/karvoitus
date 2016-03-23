@@ -139,12 +139,14 @@ table#users tr:nth-child(odd) {
 }
 #nick {
   font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  background-color: #e2fcf4;
   position: absolute;
   bottom: 0px;
   width: calc(5% + 65px);
 }
 #msg {
   font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  background-color: #e2fcf4;
   position: absolute;
   left: calc(5% + 70px);
   bottom: 0px;
