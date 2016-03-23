@@ -12,9 +12,19 @@ padd = 50,
 timestamps = true,
 context.lineCap = "round",
 context.lineJoin = "round",
-muodot = [];
+muodot = [],
+LINE = 1,
+CIRCLE = 2,
+OVAL = 3,
+RECT = 4,
+FREE = 5,
+moved = false;
 
 document.getElementById("drawframe").addEventListener("mousemove", getMouseXY);
+
+// no stupid ( / ) icons on certain unusual cases
+drawzone.ondragstart = function() { return false; };
+drawzone.onselectstart = function() { return false; };
 
 drawframe.addEventListener('contextmenu', function(rightclick) {
     rightclick.preventDefault();
@@ -143,6 +153,7 @@ function klik(event) {
   else if (piirt == 0) {
     x = Show.MouseX.value;
     y = Show.MouseY.value;
+    moved = false;
     aloita_piirto();
   }
   else {
@@ -153,10 +164,18 @@ function klik(event) {
 function deklik(event) {
   // jos kursori on liikkunut klikkauksen aloittamisen jälkeen
   // niin viimeistellään piirto onmouseup-eventillä
-  if ( piirt == 5 || x != Show.MouseX.value || y != Show.MouseY.value ) {
+  if ( moved ) {
     if (piirt != 0) {
       viimeistele_piirto();
     }
+  }
+  // jos ei liikkunut ja käytössä free draw niin tallennetaan
+  // piirron alkaessa piirretty ympyrä
+  else if ( piirt == FREE) {
+    piirt = 0;
+    muodot.push([CIRCLE, x, y, Show.Width.value/2, hae_c_a_w(), true]);
+    socket.emit('muodot', muodot);
+    refrsh();
   }
 }
 
@@ -167,24 +186,18 @@ function hae_c_a_w() {
 
 function aloita_piirto() {
   var duunikalu = $('input[name="tool"]:checked').val();
-  if (duunikalu == "line") {
-    piirt = 1;
-  }
-  else if (duunikalu == "circle") {
-    piirt = 2;
-  }
-  else if (duunikalu == "oval") {
-    piirt = 3;
-  }
-  else if (duunikalu == "rect") {
-    piirt = 4;
-  }
-  else if (duunikalu == "freedraw") {
+  if (duunikalu == FREE) {
+    // piirretään väliaikainen ympyrä alkupisteeseen; ilman tätä ympyrä piirrettäisiin
+    // vasta deklikissä
+    piirra_circle(Show.MouseX.value, Show.MouseY.value, Show.Width.value/2, hae_c_a_w(), true);
+
     freedraw_koords = [];
     freedraw();
-    piirt = 5;
+    piirt = FREE;
   }
-  refrsh();
+  else {
+    piirt = duunikalu;
+  }
 }
 
 function freedraw() {
@@ -199,19 +212,19 @@ function freedraw() {
 }
 
 function viimeistele_piirto() {
-  if (piirt == 1) {
+  if (piirt == LINE) {
     tallenna_line();
   }
-  else if (piirt == 2) {
+  else if (piirt == CIRCLE) {
     tallenna_circle();
   }
-  else if (piirt == 3) {
+  else if (piirt == OVAL) {
   	tallenna_oval();
   }
-  else if (piirt == 4) {
+  else if (piirt == RECT) {
     tallenna_rect();
   }
-  else if (piirt == 5) {
+  else if (piirt == FREE) {
     tallenna_free();
   }
   socket.emit('muodot', muodot);
@@ -223,7 +236,7 @@ function tallenna_line() {
     x = x-(Show.MouseX.value-x);
     y = y-(Show.MouseY.value-y);
   }
-  muodot.push(["line", x, y, Show.MouseX.value, Show.MouseY.value, hae_c_a_w()]);
+  muodot.push([LINE, x, y, Show.MouseX.value, Show.MouseY.value, hae_c_a_w()]);
   piirt = 0;
 };
 
@@ -231,13 +244,13 @@ function tallenna_circle() {
   var r;
   if (Show.Mid.checked) {
     r = Math.sqrt(Math.pow(Show.MouseX.value-x, 2)+Math.pow(Show.MouseY.value-y, 2));
-    muodot.push(["circle", x, y, r, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
     r = Math.sqrt( Math.pow((Show.MouseX.value-x)/2, 2) + Math.pow((Show.MouseY.value-y)/2, 2));
     x = (parseFloat(Show.MouseX.value)+parseFloat(x))/2;
     y = (parseFloat(Show.MouseY.value)+parseFloat(y))/2;
-    muodot.push(["circle", x, y, r, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
 }
@@ -249,7 +262,7 @@ function tallenna_oval() {
     y1 = Show.MouseY.value;
     lev = 1.33*Math.abs(2*(x1-x));
     kork = Math.abs(2*(y1-y));
-    muodot.push(["oval", x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([OVAL, x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
     x1 = Show.MouseX.value;
@@ -258,7 +271,7 @@ function tallenna_oval() {
     kork = Math.abs(y1-y);
     x_kesk = Math.abs(-x1-x)/2;
     y_kesk = Math.abs(-y1-y)/2;
-    muodot.push(["oval", x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([OVAL, x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
 }
@@ -272,35 +285,35 @@ function tallenna_rect() {
   if (Show.Mid.checked) {
     lev = 2*lev;
     kork = 2*kork;
-    muodot.push(["rect", x-Math.abs(x1-x), y-Math.abs(y1-y), lev, kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([RECT, x-Math.abs(x1-x), y-Math.abs(y1-y), lev, kork, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
-    muodot.push(["rect", Math.min(x, x1), Math.min(y, y1), lev, kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([RECT, Math.min(x, x1), Math.min(y, y1), lev, kork, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
 }
 
 function tallenna_free() {
-  muodot.push(["free", freedraw_koords, hae_c_a_w()]);
+  muodot.push([FREE, freedraw_koords, hae_c_a_w()]);
   refrsh();
   piirt = 0;
 }
 
 function piirra_muodot() {
   for (var i = 0; i < muodot.length; i++) {
-    if (muodot[i][0] == "line") {
+    if (muodot[i][0] == LINE) {
       piirra_line.apply(this, muodot[i].slice(1));
     }
-    else if (muodot[i][0] == "circle") {
+    else if (muodot[i][0] == CIRCLE) {
       piirra_circle.apply(this, muodot[i].slice(1));
     }
-    else if (muodot[i][0] == "oval") {
+    else if (muodot[i][0] == OVAL) {
       piirra_oval.apply(this, muodot[i].slice(1));
     }
-    else if (muodot[i][0] == "rect") {
+    else if (muodot[i][0] == RECT) {
       piirra_rect.apply(this, muodot[i].slice(1));
     }
-    else if (muodot[i][0] == "free") {
+    else if (muodot[i][0] == FREE) {
       piirra_free.apply(this, muodot[i].slice(1));
     }
   }
@@ -417,7 +430,7 @@ function refrsh() {
 }
 
 function tempPiirto() {
-  if (piirt == 1) {
+  if (piirt == LINE) {
     refrsh();
     if (Show.Mid.checked) {
       piirra_line(x-(tempX-x), y-(tempY-y), tempX, tempY, hae_c_a_w());
@@ -426,7 +439,7 @@ function tempPiirto() {
       piirra_line(x, y, tempX, tempY, hae_c_a_w());
     }
   }
-  else if (piirt == 2) {
+  else if (piirt == CIRCLE) {
     refrsh();
     if (Show.Mid.checked) {
       var r = Math.sqrt(Math.pow(Show.MouseX.value-x, 2)+Math.pow(Show.MouseY.value-y, 2));
@@ -442,7 +455,7 @@ function tempPiirto() {
     piirra_line(x, y, tempX, tempY, [apuviivacolor, 1, 1], 1);
     context.setLineDash([]);
   }
-  else if (piirt == 3) {
+  else if (piirt == OVAL) {
     refrsh();
     if (Show.Mid.checked) {
       var lev = 1.33*Math.abs(2*(tempX-x)),
@@ -466,7 +479,7 @@ function tempPiirto() {
       piirra_oval(x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked);
     }
   }
-  else if (piirt == 4) {
+  else if (piirt == RECT) {
     refrsh();
     if (Show.Mid.checked) {
       piirra_rect(x-Math.abs(tempX-x), y-Math.abs(tempY-y), 2*Math.abs(x-tempX), 2*Math.abs(y-tempY), hae_c_a_w(), Show.Fill.checked);
@@ -475,7 +488,7 @@ function tempPiirto() {
       piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), hae_c_a_w(), Show.Fill.checked);
     }
   }
-  else if (piirt == 5) {
+  else if (piirt == FREE) {
     refrsh();
     piirra_free(freedraw_koords, hae_c_a_w());
   }
@@ -503,6 +516,9 @@ function getMouseXY(e) {
   if (tempY < 0){tempY = 0}
   // show the position values in the form named Show
   // in the text fields named MouseX and MouseY
+  if (document.Show.MouseX.value != tempX || document.Show.MouseY.value != tempY) {
+    moved = true;
+  }
   document.Show.MouseX.value = tempX
   document.Show.MouseY.value = tempY
 

@@ -21,11 +21,11 @@
   <form name="Show">
     <div class="tools_sarake">
       Tools:<br>
-      <input type="radio" name="tool" value="freedraw" checked> Free draw<br>
-      <input type="radio" name="tool" value="line"> Line<br>
-      <input type="radio" name="tool" value="circle"> Circle<br>
-      <input type="radio" name="tool" value="oval"> Oval<br>
-      <input type="radio" name="tool" value="rect"> Rectangle<br>
+      <input type="radio" name="tool" value=5 checked> Free draw<br>
+      <input type="radio" name="tool" value=1> Line<br>
+      <input type="radio" name="tool" value=2> Circle<br>
+      <input type="radio" name="tool" value=3> Oval<br>
+      <input type="radio" name="tool" value=4> Rectangle<br>
     </div>
     <div class="tools_sarake">
       <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
