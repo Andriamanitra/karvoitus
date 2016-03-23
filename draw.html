@@ -28,9 +28,9 @@
       <input type="radio" name="tool" value=4> Rectangle<br>
     </div>
     <div class="tools_sarake">
-      <input type="button" value="Undo" onclick="socket.emit('command', 'undo')">
-      <input type="button" value="Clear" onclick="socket.emit('command', 'clear')">
-      <input type="button" value="Save image" onclick="downloadCanvas()"><br>
+      <input type="button" class="button_l" value="Undo" onclick="socket.emit('command', 'undo')">
+      <input type="button" class="button_l" value="Clear" onclick="socket.emit('command', 'clear')">
+      <input type="button" class="button_l" value="Save image" onclick="downloadCanvas()"><br>
       <input type="checkbox" name="Mid" value="true"> Start shape from center<br>
       <input type="checkbox" name="Fill" value="true"> Fill<br>
       Line width<br>
@@ -64,8 +64,8 @@
       <input type="button" class="vnap" value=" " style="background:#CC33FF;" onclick="vaihda_vari('#CC33FF')"><br>
     </div>
     <div id="koords">
-      X: <input type="text" name="MouseX" value="0" size="4"><br>
-      Y: <input type="text" name="MouseY" value="0" size="4"><br>
+      X: <input type="text" class="coord" name="MouseX" value="0" size="4"><br>
+      Y: <input type="text" class="coord" name="MouseY" value="0" size="4"><br>
     </div>
   </form>
   </div>
