@@ -1,5 +1,6 @@
 body {
   text-align: left;
+  background-color: #CFFAED;
 }
 #left {
   position: absolute;
@@ -23,7 +24,7 @@ body {
   cursor: crosshair;
   width: 800px;
   height: 450px;
-  background-color: #EEEEEE;
+  background-color: #b1d6cb;
   padding: 50px;
 }
 #drawzone {
@@ -105,10 +106,10 @@ body {
   padding: 0px;
 }
 table#users tr:nth-child(even) {
-  background-color: #ECECEC;
+  background-color: #e2fcf4;
 }
 table#users tr:nth-child(odd) {
-  background-color: #FAFAFA;
+  background-color: #d7f0e9;
 }
 #koords {
   height: 100%;
@@ -128,7 +129,7 @@ table#users tr:nth-child(odd) {
   padding: 0;
 }
 #messages li {padding: 1px 10px; }
-#messages li:nth-child(odd) { background: #FAFAFA; }
+#messages li:nth-child(odd) { background: #e2fcf4; }
 #chatti {
   position: absolute;
   margin-bottom: 10px;
