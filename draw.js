@@ -592,7 +592,9 @@ $('form').submit(function(){
         scale = (scale % 1) + 0.5;
       }
       else {
-        scale = new_scale;
+        if (new_scale < 0.1) {scale = 0.1}
+        else if (new_scale > 10) {scale = 10}
+        else {scale = new_scale}
       }
       drawzone.height = 450*scale;
       drawzone.width = 800*scale;
