@@ -129,7 +129,7 @@ function timestamp() {
 
 io.on('connection', function(socket){
   socket.username = "~anon"+("0000"+anoncount).slice(-4);
-  var ip = client.handshake.headers[‘x-forwarded-for’] || client.handshake.address.address;
+  var ip = client.handshake.headers['x-forwarded-for'] || client.handshake.address.address;
   anoncount += 1;
   socket.emit('nick', socket.username);
   socket.emit('muodot', muodot);
