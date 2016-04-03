@@ -18,7 +18,8 @@ CIRCLE = 2,
 OVAL = 3,
 RECT = 4,
 FREE = 5,
-moved = false;
+moved = false,
+scale = 1.0;
 
 document.getElementById("drawframe").addEventListener("mousemove", getMouseXY);
 
@@ -325,12 +326,16 @@ function piirra_line(x_alku, y_alku, x_loppu, y_loppu, caw) {
   y_alku -= padd;
   x_loppu -= padd;
   y_loppu -= padd;
+  x_alku = scale*x_alku;
+  y_alku = scale*y_alku;
+  x_loppu = scale*x_loppu;
+  y_loppu = scale*y_loppu;
   context.beginPath();
   context.moveTo(x_alku, y_alku);
   context.lineTo(x_loppu, y_loppu);
   context.strokeStyle = caw[0];
   context.globalAlpha = caw[1];
-  context.lineWidth = caw[2];
+  context.lineWidth = scale*caw[2];
   context.stroke();
   context.closePath();
 }
@@ -339,18 +344,21 @@ function piirra_circle(x_keskip, y_keskip, r, caw, fill) {
   vari = typeof vari !== 'undefined' ? vari : "#000000";
   x_keskip -= padd;
   y_keskip -= padd;
+  x_keskip = scale*x_keskip;
+  y_keskip = scale*y_keskip;
+  r = scale*r;
   context.beginPath();
   context.arc(x_keskip, y_keskip, r, 0, 2*Math.PI);
   if (fill) {
     context.fillStyle = caw[0];
     context.globalAlpha = caw[1];
-    context.lineWidth = caw[2];
+    context.lineWidth = scale*caw[2];
     context.fill();
   }
   else {
     context.strokeStyle = caw[0];
     context.globalAlpha = caw[1];
-    context.lineWidth = caw[2];
+    context.lineWidth = scale*caw[2];
     context.stroke();
   }
   context.closePath();
@@ -359,10 +367,10 @@ function piirra_circle(x_keskip, y_keskip, r, caw, fill) {
 function piirra_oval(x_keskip, y_keskip, lev, kork, caw, fill) {
   x_keskip -= padd;
   y_keskip -= padd;
-  x_keskip = parseFloat(x_keskip);
-  y_keskip = parseFloat(y_keskip);
-  lev = parseFloat(lev);
-  kork = parseFloat(kork);
+  x_keskip = scale*parseFloat(x_keskip);
+  y_keskip = scale*parseFloat(y_keskip);
+  lev = scale*parseFloat(lev);
+  kork = scale*parseFloat(kork);
 
   context.beginPath();
 
@@ -378,16 +386,13 @@ function piirra_oval(x_keskip, y_keskip, lev, kork, caw, fill) {
     x_keskip - lev/2, y_keskip - kork/2, // C4
     x_keskip, y_keskip - kork/2); // A1
 
+  context.fillStyle = caw[0];
+  context.globalAlpha = caw[1];
+  context.lineWidth = scale*caw[2];
   if (fill) {
-    context.fillStyle = caw[0];
-    context.globalAlpha = caw[1];
-    context.lineWidth = caw[2];
     context.fill();
   }
   else {
-    context.strokeStyle = caw[0];
-    context.globalAlpha = caw[1]
-    context.lineWidth = caw[2];
     context.stroke();
   }
   context.closePath();
@@ -395,17 +400,14 @@ function piirra_oval(x_keskip, y_keskip, lev, kork, caw, fill) {
 
 function piirra_rect(x0, y0, lev, kork, caw, fill) {
   context.beginPath();
-  context.rect(x0-padd, y0-padd, lev, kork);
+  context.rect(scale*(x0-padd), scale*(y0-padd), scale*lev, scale*kork);
+  context.fillStyle = caw[0];
+  context.globalAlpha = caw[1];
+  context.lineWidth = scale*caw[2];
   if (fill) {
-    context.fillStyle = caw[0];
-    context.globalAlpha = caw[1];
-    context.lineWidth = caw[2];
     context.fill();
   }
   else {
-    context.strokeStyle = caw[0];
-    context.globalAlpha = caw[1];
-    context.lineWidth = caw[2];
     context.stroke();
   }
   context.closePath();
@@ -414,11 +416,11 @@ function piirra_rect(x0, y0, lev, kork, caw, fill) {
 function piirra_free(koordlist, caw) {
   context.strokeStyle = caw[0];
   context.globalAlpha = caw[1];
-  context.lineWidth = caw[2];
+  context.lineWidth = scale*caw[2];
   context.beginPath();
-  context.moveTo(koordlist[0]-padd, koordlist[1]-padd);
+  context.moveTo(scale*(koordlist[0]-padd), scale*(koordlist[1]-padd));
   for(i = 2; i < koordlist.length; i=i+2) {
-    context.lineTo(koordlist[i]-padd, koordlist[i+1]-padd);
+    context.lineTo(scale*(koordlist[i]-padd), scale*(koordlist[i+1]-padd));
   }
   context.stroke();
   context.closePath();
@@ -519,8 +521,8 @@ function getMouseXY(e) {
   if (document.Show.MouseX.value != tempX || document.Show.MouseY.value != tempY) {
     moved = true;
   }
-  document.Show.MouseX.value = tempX
-  document.Show.MouseY.value = tempY
+  document.Show.MouseX.value = (tempX-padd)/scale+padd;
+  document.Show.MouseY.value = (tempY-padd)/scale+padd;
 
   if (piirt == 5) {
     freedraw()
@@ -583,6 +585,24 @@ $('form').submit(function(){
   if (msg_val[0] == '/') {
     if (msg_val.slice(1) == "timestamp") {
       toggle_timestamp();
+    }
+    else if (msg_val.slice(1, 6) == "scale") {
+      var new_scale = parseFloat(msg_val.slice(6));
+      if (isNaN(new_scale)) {
+        scale = (scale % 1) + 0.5;
+      }
+      else {
+        scale = new_scale;
+      }
+      drawzone.height = 450*scale;
+      drawzone.width = 800*scale;
+      document.getElementById('drawframe').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
+      document.getElementById('tools').setAttribute("style","top:"+(450*scale+2*padd+5)+"px;width:"+(800*scale-padd)+"px");
+      document.getElementById('left').setAttribute("style","width:"+(800*scale+2*padd)+"px");
+      document.getElementById('right').setAttribute("style","left:"+(800*scale+2*padd)+"px");
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      refrsh();
     }
     else {
       socket.emit('command', msg_val.slice(1));
