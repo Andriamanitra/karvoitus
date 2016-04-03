@@ -5,8 +5,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
-app.use(express.logger(':req[X-Forwarded-For] - - [:date] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"'));
-
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/draw.html');
