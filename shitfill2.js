@@ -35,12 +35,14 @@ function fill (xx, yy, cc, aa) {
     yy = pos[1];
     reachLeft = false;
     reachRight = false;
+    // edetään ylöspäin kunnes törmätään eri väriseen pikseliin
     while (pixeldatamatch(pixeldata0, gpd(xx, yy))) {
       if (yy < 0) {break}
       yy = yy-1;
     }
     yy++;
-    // maalataan pikseli jos matchaa
+    
+    // edetään alaspäin maalaten matkalta pikselit ja katsoen joka kohdassa sivuille
     while (y < drawzone.height-1 && pixeldatamatch(pixeldata0, gpd(xx, yy))) {
       context.putImageData(pixeldata1, xx, yy);
 
@@ -69,8 +71,6 @@ function fill (xx, yy, cc, aa) {
           reachRight = false;
         }
       }
-
-      // edetään alaspäin
       yy++;
     }
   }
