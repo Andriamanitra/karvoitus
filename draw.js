@@ -281,8 +281,8 @@ function tallenna_rect() {
   var x1, y1, lev, kork;
   x1 = Show.MouseX.value;
   y1 = Show.MouseY.value;
-  lev = Math.abs(x-tempX);
-  kork = Math.abs(y-tempY);
+  lev = Math.abs(x-x1);
+  kork = Math.abs(y-y1);
   if (Show.Mid.checked) {
     lev = 2*lev;
     kork = 2*kork;
@@ -349,16 +349,15 @@ function piirra_circle(x_keskip, y_keskip, r, caw, fill) {
   r = scale*r;
   context.beginPath();
   context.arc(x_keskip, y_keskip, r, 0, 2*Math.PI);
+
+  context.globalAlpha = caw[1];
+  context.lineWidth = scale*caw[2];
   if (fill) {
     context.fillStyle = caw[0];
-    context.globalAlpha = caw[1];
-    context.lineWidth = scale*caw[2];
     context.fill();
   }
   else {
     context.strokeStyle = caw[0];
-    context.globalAlpha = caw[1];
-    context.lineWidth = scale*caw[2];
     context.stroke();
   }
   context.closePath();
@@ -386,13 +385,14 @@ function piirra_oval(x_keskip, y_keskip, lev, kork, caw, fill) {
     x_keskip - lev/2, y_keskip - kork/2, // C4
     x_keskip, y_keskip - kork/2); // A1
 
-  context.fillStyle = caw[0];
   context.globalAlpha = caw[1];
   context.lineWidth = scale*caw[2];
   if (fill) {
+    context.fillStyle = caw[0];
     context.fill();
   }
   else {
+    context.strokeStyle = caw[0];
     context.stroke();
   }
   context.closePath();
@@ -401,13 +401,14 @@ function piirra_oval(x_keskip, y_keskip, lev, kork, caw, fill) {
 function piirra_rect(x0, y0, lev, kork, caw, fill) {
   context.beginPath();
   context.rect(scale*(x0-padd), scale*(y0-padd), scale*lev, scale*kork);
-  context.fillStyle = caw[0];
   context.globalAlpha = caw[1];
   context.lineWidth = scale*caw[2];
   if (fill) {
+    context.fillStyle = caw[0];
     context.fill();
   }
   else {
+    context.strokeStyle = caw[0];
     context.stroke();
   }
   context.closePath();
@@ -431,7 +432,7 @@ function refrsh() {
   piirra_muodot();
 }
 
-function tempPiirto() {
+function tempPiirto(tempX, tempY) {
   if (piirt == LINE) {
     refrsh();
     if (Show.Mid.checked) {
@@ -469,9 +470,7 @@ function tempPiirto() {
     }
     else {
       context.setLineDash([5]);
-      context.strokeStyle = apuviivacolor;
-      context.lineWidth = 1;
-      context.strokeRect(x-padd, y-padd, tempX-x, tempY-y);
+      piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), [apuviivacolor, 1, 1], false);
       context.setLineDash([]);
 
       var lev = 1.33*Math.abs(tempX-x),
@@ -498,20 +497,14 @@ function tempPiirto() {
 
 
 // modifioitua lainacoodia
-// Temporary variables to hold mouse x-y pos.s
-var tempX = 0;
-var tempY = 0;
 // Main function to retrieve mouse x-y pos.s
 function getMouseXY(e) {
+  var tempX = 0;
+  var tempY = 0;
   tempX = e.pageX
   tempY = e.pageY
   tempX = tempX-frameLeft;
   tempY = tempY-frameTop;
-
-  // jos piirto on aloitettu
-  if (piirt != 0) {
-    tempPiirto(tempX, tempY);
-  }
 
   // catch possible negative values in NS4
   if (tempX < 0){tempX = 0}
@@ -524,9 +517,14 @@ function getMouseXY(e) {
   document.Show.MouseX.value = (tempX-padd)/scale+padd;
   document.Show.MouseY.value = (tempY-padd)/scale+padd;
 
-  if (piirt == 5) {
-    freedraw()
+  // jos piirto on aloitettu
+  if (piirt != 0) {
+    if (piirt == 5) {
+      freedraw();
+    }
+    tempPiirto(Show.MouseX.value, Show.MouseY.value);
   }
+
   return true
 }
 
