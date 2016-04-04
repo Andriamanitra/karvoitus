@@ -274,6 +274,9 @@ function aloita_piirto() {
     freedraw();
     piirt = FREE;
   }
+  else if (duunikalu == FILL) {
+    fill(Show.MouseX.value-padd, Show.MouseY.value-padd, Show.Color.value, Show.Alpha.value);
+  }
   else {
     piirt = duunikalu;
   }
@@ -288,6 +291,10 @@ function freedraw() {
   if (freedraw_koords.length >= 2000) {
     viimeistele_piirto();
   }
+}
+
+function fill() {
+  alert("NO FILL AVAILABLE; TOO HARD TO CODE!");
 }
 
 function viimeistele_piirto() {
