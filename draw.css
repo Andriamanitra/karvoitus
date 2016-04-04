@@ -31,10 +31,14 @@ body {
   background-color:white;
   border: 1px solid black;
 }
+#toolpreview {
+  background-color: #F5F5F5;
+  border: 1px solid black;
+}
 #piirtoaika {
   position: absolute;
-  top: 510px;
-  left: 780px;
+  top: 7px;
+  right: 50px;
   font-size: 30px;
   font-weight: bold;
   cursor: crosshair;
@@ -51,11 +55,29 @@ body {
   float:left;
   text-align:left;
   padding-top: 5px;
-  padding-left: 10px;
-  padding-right:40px;
+  padding-left: 20px;
+  padding-right:30px;
+}
+#toolbuttons {
+  position: absolute;
+  left: 92px;
+  top: 4px;
+}
+.tool_button {
+  background-color: #ffffff;
+  height: 30px;
+  width:  30px;
+  margin-top: 1px;
+}
+.tool_button_clicked {
+  outline: 2px solid black;
+  outline-offset: -1px;
 }
 .button_l {
   background-color: #d7f0e9;
+  width: 68px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 /* Värin valinta */
 #vval-div {

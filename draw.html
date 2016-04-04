@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="draw.css">
+  <link rel="stylesheet" type="text/css" href="newdraw.css">
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <title>Karvoituspeli</title>
@@ -20,25 +20,30 @@
   <div id="tools" class="unselectable">
   <form name="Show">
     <div class="tools_sarake">
-      Tools:<br>
-      <input type="radio" name="tool" value=5 checked> Free draw<br>
-      <input type="radio" name="tool" value=1> Line<br>
-      <input type="radio" name="tool" value=2> Circle<br>
-      <input type="radio" name="tool" value=3> Oval<br>
-      <input type="radio" name="tool" value=4> Rectangle<br>
+      <div>
+        <canvas id="toolpreview" width="60" height="60">
+        If you see this text HTML5 Canvas is not supported by your browser.
+        </canvas>
+      </div>
+      <div id="toolbuttons">
+        <input type="image" class="tool_button" id="butt5" src="free.png" onclick="valitse_duunikalu(5)">
+        <input type="image" class="tool_button" id="butt1" src="line.png" onclick="valitse_duunikalu(1)">
+        <input type="image" class="tool_button" id="butt4" src="rect.png" onclick="valitse_duunikalu(4)"><br>
+        <input type="image" class="tool_button" id="butt2" src="circ.png" onclick="valitse_duunikalu(2)">
+        <input type="image" class="tool_button" id="butt3" src="oval.png" onclick="valitse_duunikalu(3)">
+        <input type="image" class="tool_button" id="butt6" src="fill.png" onclick="valitse_duunikalu(5)">
+      </div>
+      <input type="checkbox" name="Mid" onclick="valitse_duunikalu(duunikalu)" value="false"> Start from center<br>
+      <input type="checkbox" name="Fill" onclick="valitse_duunikalu(duunikalu)" value="false"> Fill<br>
+      Width
+      <input type="range" name="Width" oninput="valitse_duunikalu(duunikalu)" style="cursor: pointer" value=1 min=1 max=80><br>
+      Alpha
+      <input type="range" name="Alpha" oninput="valitse_duunikalu(duunikalu)" style="cursor: pointer" value=1 step=0.05 min=0 max=1>
     </div>
     <div class="tools_sarake">
       <input type="button" class="button_l" value="Undo" onclick="socket.emit('command', 'undo')">
       <input type="button" class="button_l" value="Clear" onclick="socket.emit('command', 'clear')">
-      <input type="button" class="button_l" value="Save image" onclick="downloadCanvas()"><br>
-      <input type="checkbox" name="Mid" value="true"> Start shape from center<br>
-      <input type="checkbox" name="Fill" value="true"> Fill<br>
-      Line width<br>
-      <input type="range" name="Width" style="cursor: pointer" value=1 min=1 max=80><br>
-      Alpha<br>
-      <input type="range" name="Alpha" style="cursor: pointer" value=1 step=0.05 min=0 max=1>
-    </div>
-    <div class="tools_sarake">
+      <input type="button" class="button_l" value="Save" onclick="downloadCanvas()"><br>
       <div id="vval-div"><input type="color" id="vval" name="Color" value="#000000"></div>
       <input type="button" class="vnap" value=" " style="margin-left:78px;background:#000000;" onclick="vaihda_vari('#000000')">
       <input type="button" class="vnap" value=" " style="background:#808080;" onclick="vaihda_vari('#808080')">
@@ -87,7 +92,7 @@
 After everything is loaded get the javascript,
 this way there should be no errors
 -->
-<script src="draw.js"></script>
+<script src="newdraw.js"></script>
 
 </body>
 </html>

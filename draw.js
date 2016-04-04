@@ -7,6 +7,7 @@ tools = document.getElementById("tools").innerHTML,
 apuviivacolor = "#C0C0C0",
 x = 0,
 y = 0,
+duunikalu = 5,
 piirt = 0,
 padd = 50,
 timestamps = true,
@@ -18,9 +19,12 @@ CIRCLE = 2,
 OVAL = 3,
 RECT = 4,
 FREE = 5,
+FILL = 6,
 moved = false,
+buttclicked = null,
 scale = 1.0;
 
+valitse_duunikalu(5);
 document.getElementById("drawframe").addEventListener("mousemove", getMouseXY);
 
 // no stupid ( / ) icons on certain unusual cases
@@ -118,10 +122,85 @@ function set_offsets() {
   frameLeft = drawframe.offsetLeft,
   frameTop = drawframe.offsetTop;
   refrsh();
-};
+}
+
+function highlight_button(bid) {
+  var butt = document.getElementById(bid);
+  if (buttclicked != null) {
+    buttclicked.className = "tool_button";
+  }
+  buttclicked = butt;
+  butt.className = "tool_button_clicked";
+}
+
+function valitse_duunikalu(d) {
+  duunikalu = d;
+  // muutetaan scale ja context väliaikaisesti jotta preview on bueno
+  var temp_scale = scale;
+  scale = 1
+  context = document.getElementById('toolpreview').getContext('2d');
+  context.clearRect(0,0,60,60);
+  context.lineCap = "round";
+  context.lineJoin = "round";
+
+  switch(duunikalu) {
+    case FREE:
+      highlight_button("butt5");
+      piirra_free([66,70,66,68,67,67,69,66,70,65,71,64,73,63,75,63,76,64,76,66,77,67,77,69,76,70,76,72,76,74,
+                   75,75,75,77,75,79,75,81,75,83,76,84,77,85,78,86,81,86, 90, 90, 95,95], hae_c_a_w());
+      break;
+    case LINE:
+      highlight_button("butt1");
+      piirra_line(65, 65, 95, 95, hae_c_a_w());
+      break;
+    case CIRCLE:
+      highlight_button("butt2");
+      piirra_circle(80, 80, 20, hae_c_a_w(), Show.Fill.checked);
+      context.setLineDash([3]);
+      if(Show.Mid.checked) {
+        piirra_line(80, 80, 93, 95, [apuviivacolor, 1, 1], 1);
+      }
+      else {
+        piirra_line(67, 65, 93, 95, [apuviivacolor, 1, 1], 1);
+      }
+      context.setLineDash([]);
+      break;
+    case OVAL:
+      highlight_button("butt3");
+      piirra_oval(80, 80, 60, 25, hae_c_a_w(), Show.Fill.checked);
+      context.setLineDash([3]);
+      if(Show.Mid.checked) {
+        piirra_line(80, 80, 93, 90, [apuviivacolor, 1, 1], 1);
+      }
+      else {
+        piirra_line(67, 70, 93, 90, [apuviivacolor, 1, 1], 1);
+      }
+      context.setLineDash([]);
+      break;
+    case RECT:
+      highlight_button("butt4");
+      piirra_rect(60, 65, 40, 30, hae_c_a_w(), Show.Fill.checked);
+      context.setLineDash([3]);
+      if(Show.Mid.checked) {
+        piirra_line(80, 80, 100, 95, [apuviivacolor, 1, 1], 1);
+      }
+      else {
+        piirra_line(60, 65, 100, 95, [apuviivacolor, 1, 1], 1);
+      }
+      context.setLineDash([]);
+      break;
+    case FILL:
+      highlight_button("butt6");
+      break;
+  }
+
+  scale = temp_scale;
+  context = drawzone.getContext('2d');
+}
 
 function vaihda_vari(uusi_vari) {
   Show.Color.value = uusi_vari;
+  valitse_duunikalu(duunikalu);
 }
 
 // lainafunktio
@@ -186,7 +265,6 @@ function hae_c_a_w() {
 }
 
 function aloita_piirto() {
-  var duunikalu = $('input[name="tool"]:checked').val();
   if (duunikalu == FREE) {
     // piirretään väliaikainen ympyrä alkupisteeseen; ilman tätä ympyrä piirrettäisiin
     // vasta deklikissä
