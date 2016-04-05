@@ -170,7 +170,7 @@ function valitse_duunikalu(d) {
         piirra_line(80, 80, 93, 90, [apuviivacolor, 1, 1], 1);
       }
       else {
-        piirra_line(67, 70, 93, 90, [apuviivacolor, 1, 1], 1);
+        piirra_rect(57, 67, 46, 26, [apuviivacolor, 1, 1], 0);
       }
       context.setLineDash([]);
       break;
