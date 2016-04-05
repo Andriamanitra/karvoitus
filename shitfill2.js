@@ -21,8 +21,7 @@ function fill (xx, yy, cc, aa) {
 
   var pixeldata1 = gpd(xx, yy);
   rgbcc = hexToRgb(cc);
-  // blendataan jotta värivalitsin ottaa oikean värin myös pikseleissä
-  // joissa alpha < 255; 255 255 255 koska taustaväri on valkoinen.
+  // blendataan fill taustaväriin
   pixeldata1.data[0] = rgbcc.r*aa + pixeldata0.data[0]*(1.0-aa);
   pixeldata1.data[1] = rgbcc.g*aa + pixeldata0.data[1]*(1.0-aa);
   pixeldata1.data[2] = rgbcc.b*aa + pixeldata0.data[2]*(1.0-aa);
@@ -36,12 +35,14 @@ function fill (xx, yy, cc, aa) {
     yy = pos[1];
     reachLeft = false;
     reachRight = false;
+    // edetään ylöspäin kunnes törmätään eri väriseen pikseliin
     while (pixeldatamatch(pixeldata0, gpd(xx, yy))) {
       if (yy < 0) {break}
       yy = yy-1;
     }
     yy++;
-    // maalataan pikseli jos matchaa
+    
+    // edetään alaspäin maalaten matkalta pikselit ja katsoen joka kohdassa sivuille
     while (y < drawzone.height-1 && pixeldatamatch(pixeldata0, gpd(xx, yy))) {
       context.putImageData(pixeldata1, xx, yy);
 
@@ -70,8 +71,6 @@ function fill (xx, yy, cc, aa) {
           reachRight = false;
         }
       }
-
-      // edetään alaspäin
       yy++;
     }
   }
