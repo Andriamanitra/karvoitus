@@ -170,12 +170,16 @@ io.on('connection', function(socket){
 
   socket.on('command', function(data){
     if (data == "clear"){
-      muodot = [];
-      io.emit('muodot', muodot);
+      if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
+        muodot = [];
+        io.emit('muodot', muodot);
+      }
     }
     else if (data == "undo"){
-      muodot = muodot.slice(0, muodot.length-1);
-      io.emit('muodot', muodot);
+      if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
+        muodot = muodot.slice(0, muodot.length-1);
+        io.emit('muodot', muodot);
+      }
     }
     else if (data.split(" ")[0] == "nick") {
       var new_nick = data.split(" ")[1];

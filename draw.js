@@ -3,10 +3,11 @@ drawframe = document.getElementById('drawframe'),
 frameLeft = drawframe.offsetLeft,
 frameTop = drawframe.offsetTop,
 context = drawzone.getContext('2d'),
-tools = document.getElementById("tools").innerHTML,
 apuviivacolor = "#C0C0C0",
 x = 0,
 y = 0,
+MouseX = 0,
+MouseY = 0,
 duunikalu = 5,
 piirt = 0,
 padd = 50,
@@ -37,7 +38,7 @@ drawframe.addEventListener('contextmenu', function(rightclick) {
 }, false);
 
 var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-if (!is_chrome) {$('#messages').append($('<li>').text("** Chromium-based web browser such as Google Chrome is recommended for playing this game"));}
+if (!is_chrome) {appendmsg("** Chromium-based web browser such as Google Chrome is recommended for playing this game");}
 
 // socket.io alustus:
 socket = io();
@@ -46,11 +47,7 @@ socket = io();
 
 // serverin ilmoitukset ja tavalliset chat-viestit
 socket.on('message', function(msg){
-  if (timestamps) {
-    msg = timestamp()+msg;
-  }
-  $('#messages').append($('<li>').text(msg));
-  $('#messages').scrollTop($('#messages')[0].scrollHeight);
+  appendmsg(msg);
 });
 
 // serveri kertoo mikä on tämän hetkinen nick
@@ -98,7 +95,7 @@ socket.on('users', function(userlista){
   $('#users tbody tr').remove();
   for (var i = 0; i < userlista.length; i++) {
     var row = document.getElementById('users').insertRow(0);
-    row.insertCell(0).innerHTML = userlista[i][0];
+    row.insertCell(0).innerHTML = (userlista[i][0] == "0" ? "Drawing" : userlista[i][0]);
     row.insertCell(1).innerHTML = userlista[i][1];
   }
 });
@@ -219,7 +216,7 @@ function klik(event) {
   // middle click; värivalitsin
   else if (event.button == 1) {
     event.preventDefault();
-    var pixel = context.getImageData(Show.MouseX.value-padd, Show.MouseY.value-padd, 1, 1).data;
+    var pixel = context.getImageData(getX()-padd, getY()-padd, 1, 1).data;
     var alpha = pixel[3]/255;
 
     // blendataan jotta värivalitsin ottaa oikean värin myös pikseleissä
@@ -231,8 +228,8 @@ function klik(event) {
   }
   // muu klik; aloitetaan piirto
   else if (piirt == 0) {
-    x = Show.MouseX.value;
-    y = Show.MouseY.value;
+    x = getX();
+    y = getY();
     moved = false;
     aloita_piirto();
   }
@@ -268,14 +265,14 @@ function aloita_piirto() {
   if (duunikalu == FREE) {
     // piirretään väliaikainen ympyrä alkupisteeseen; ilman tätä ympyrä piirrettäisiin
     // vasta deklikissä
-    piirra_circle(Show.MouseX.value, Show.MouseY.value, Show.Width.value/2, hae_c_a_w(), true);
+    piirra_circle(getX(), getY(), Show.Width.value/2, hae_c_a_w(), true);
 
     freedraw_koords = [];
     freedraw();
     piirt = FREE;
   }
   else if (duunikalu == FILL) {
-    fill(Show.MouseX.value-padd, Show.MouseY.value-padd, Show.Color.value, Show.Alpha.value);
+    fill(getX()-padd, getY()-padd, Show.Color.value, Show.Alpha.value);
   }
   else {
     piirt = duunikalu;
@@ -283,9 +280,9 @@ function aloita_piirto() {
 }
 
 function freedraw() {
-  if(freedraw.length == 0 || freedraw_koords.slice(-2) != [Show.MouseX.value, Show.MouseY.value]){
-    freedraw_koords.push(Show.MouseX.value);
-    freedraw_koords.push(Show.MouseY.value);
+  if(freedraw.length == 0 || freedraw_koords.slice(-2) != [getX(), getY()]){
+    freedraw_koords.push(getX());
+    freedraw_koords.push(getY());
   }
 
   if (freedraw_koords.length >= 2000) {
@@ -319,23 +316,23 @@ function viimeistele_piirto() {
 
 function tallenna_line() {
   if (Show.Mid.checked) {
-    x = x-(Show.MouseX.value-x);
-    y = y-(Show.MouseY.value-y);
+    x = x-(getX()-x);
+    y = y-(getY()-y);
   }
-  muodot.push([LINE, x, y, Show.MouseX.value, Show.MouseY.value, hae_c_a_w()]);
+  muodot.push([LINE, x, y, getX(), getY(), hae_c_a_w()]);
   piirt = 0;
 };
 
 function tallenna_circle() {
   var r;
   if (Show.Mid.checked) {
-    r = Math.sqrt(Math.pow(Show.MouseX.value-x, 2)+Math.pow(Show.MouseY.value-y, 2));
+    r = Math.sqrt(Math.pow(getX()-x, 2)+Math.pow(getY()-y, 2));
     muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
-    r = Math.sqrt( Math.pow((Show.MouseX.value-x)/2, 2) + Math.pow((Show.MouseY.value-y)/2, 2));
-    x = (parseFloat(Show.MouseX.value)+parseFloat(x))/2;
-    y = (parseFloat(Show.MouseY.value)+parseFloat(y))/2;
+    r = Math.sqrt( Math.pow((getX()-x)/2, 2) + Math.pow((getY()-y)/2, 2));
+    x = (parseFloat(getX())+parseFloat(x))/2;
+    y = (parseFloat(getY())+parseFloat(y))/2;
     muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Show.Fill.checked]);
   }
   piirt = 0;
@@ -344,15 +341,15 @@ function tallenna_circle() {
 function tallenna_oval() {
   var x1, y1, lev, kork, x_kesk, y_kesk;
   if (Show.Mid.checked) {
-    x1 = Show.MouseX.value;
-    y1 = Show.MouseY.value;
+    x1 = getX();
+    y1 = getY();
     lev = 1.33*Math.abs(2*(x1-x));
     kork = Math.abs(2*(y1-y));
     muodot.push([OVAL, x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked]);
   }
   else {
-    x1 = Show.MouseX.value;
-    y1 = Show.MouseY.value;
+    x1 = getX();
+    y1 = getY();
     lev = 1.33*Math.abs(x1-x);
     kork = Math.abs(y1-y);
     x_kesk = Math.abs(-x1-x)/2;
@@ -364,8 +361,8 @@ function tallenna_oval() {
 
 function tallenna_rect() {
   var x1, y1, lev, kork;
-  x1 = Show.MouseX.value;
-  y1 = Show.MouseY.value;
+  x1 = getX();
+  y1 = getY();
   lev = Math.abs(x-x1);
   kork = Math.abs(y-y1);
   if (Show.Mid.checked) {
@@ -530,13 +527,13 @@ function tempPiirto(tempX, tempY) {
   else if (piirt == CIRCLE) {
     refrsh();
     if (Show.Mid.checked) {
-      var r = Math.sqrt(Math.pow(Show.MouseX.value-x, 2)+Math.pow(Show.MouseY.value-y, 2));
+      var r = Math.sqrt(Math.pow(getX()-x, 2)+Math.pow(getY()-y, 2));
       piirra_circle(x, y, r, hae_c_a_w(), Show.Fill.checked);
     }
     else {
-      var r = Math.sqrt( Math.pow((Show.MouseX.value-x)/2, 2) + Math.pow((Show.MouseY.value-y)/2, 2)),
-      x_keskip = (parseFloat(Show.MouseX.value)+parseFloat(x))/2,
-      y_keskip = (parseFloat(Show.MouseY.value)+parseFloat(y))/2;
+      var r = Math.sqrt( Math.pow((getX()-x)/2, 2) + Math.pow((getY()-y)/2, 2)),
+      x_keskip = (parseFloat(getX())+parseFloat(x))/2,
+      y_keskip = (parseFloat(getY())+parseFloat(y))/2;
       piirra_circle(x_keskip, y_keskip, r, hae_c_a_w(), Show.Fill.checked);
     }
     context.setLineDash([5]);
@@ -596,35 +593,44 @@ function getMouseXY(e) {
   if (tempY < 0){tempY = 0}
   // show the position values in the form named Show
   // in the text fields named MouseX and MouseY
-  if (document.Show.MouseX.value != tempX || document.Show.MouseY.value != tempY) {
+  if (MouseX != tempX || MouseY != tempY) {
     moved = true;
   }
-  document.Show.MouseX.value = (tempX-padd)/scale+padd;
-  document.Show.MouseY.value = (tempY-padd)/scale+padd;
+  MouseX = (tempX-padd)/scale+padd;
+  MouseY = (tempY-padd)/scale+padd;
+  document.getElementById("koords").innerHTML = MouseX+","+MouseY;
 
   // jos piirto on aloitettu
   if (piirt != 0) {
     if (piirt == 5) {
       freedraw();
     }
-    tempPiirto(Show.MouseX.value, Show.MouseY.value);
+    tempPiirto(MouseX, MouseY);
   }
 
   return true
 }
 
+function getX() {
+  return Math.round(MouseX);
+}
+
+function getY() {
+  return Math.round(MouseY);
+}
+
 function piirtovuoroon() {
-  document.getElementById("tools").innerHTML = tools;
-  document.onmousemove = getMouseXY;
   document.getElementById("drawframe").onmousedown = klik;
   document.getElementById("drawframe").onmouseup = deklik;
 }
 
 function piirtovuorosta() {
-  document.onmousemove = "";
-  document.getElementById("drawframe").onmousedown = "";
+  document.getElementById("drawframe").onmousedown = notyourturn;
   document.getElementById("drawframe").onmouseup = "";
-  document.getElementById("tools").innerHTML = "";
+}
+
+function notyourturn() {
+  appendmsg("** It's not yout turn to draw!")
 }
 
 function toggle_timestamp() {
@@ -650,12 +656,19 @@ function timestamp() {
 }
 
 function piirtoaika_tick(sekunnit) {
-  console.log(sekunnit);
   sekunnit = sekunnit-1;
   var mins = Math.floor(sekunnit/60);
   var seks = addz(sekunnit%60);
   $('#piirtoaika').html(mins+":"+seks);
   piirtoaikalaskuri = setTimeout(function() {piirtoaika_tick(sekunnit);}, 1000);
+}
+
+function appendmsg(msg) {
+  if (timestamps) {
+    msg = timestamp()+msg;
+  }
+  $('#messages').append($('<li>').text(msg));
+  $('#messages').scrollTop($('#messages')[0].scrollHeight);
 }
 
 // Nickinvaihto

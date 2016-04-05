@@ -15,16 +15,15 @@
     If you see this text HTML5 Canvas is not supported by your browser.
     </canvas>
     <div id="piirtoaika" class="unselectable"></div>
+    <div id="koords" class="unselectable">0,0</div>
   </div>
 
-  <div id="tools" class="unselectable">
+  <div id="tools">
   <form name="Show">
     <div class="tools_sarake">
-      <div>
-        <canvas id="toolpreview" width="60" height="60">
-        If you see this text HTML5 Canvas is not supported by your browser.
-        </canvas>
-      </div>
+      <canvas id="toolpreview" width="60" height="60">
+      If you see this text HTML5 Canvas is not supported by your browser.
+      </canvas>
       <div id="toolbuttons">
         <input type="image" class="tool_button" id="butt5" src="free.PNG" onclick="valitse_duunikalu(5)">
         <input type="image" class="tool_button" id="butt1" src="line.PNG" onclick="valitse_duunikalu(1)">
@@ -33,12 +32,14 @@
         <input type="image" class="tool_button" id="butt3" src="oval.PNG" onclick="valitse_duunikalu(3)">
         <input type="image" class="tool_button" id="butt6" src="fill.PNG" onclick="valitse_duunikalu(6)">
       </div>
-      <input type="checkbox" name="Mid" onclick="valitse_duunikalu(duunikalu)" value="false"> Start from center<br>
-      <input type="checkbox" name="Fill" onclick="valitse_duunikalu(duunikalu)" value="false"> Fill<br>
-      Width
-      <input type="range" name="Width" oninput="valitse_duunikalu(duunikalu)" style="cursor: pointer" value=1 min=1 max=80><br>
-      Alpha
-      <input type="range" name="Alpha" oninput="valitse_duunikalu(duunikalu)" style="cursor: pointer" value=1 step=0.05 min=0 max=1>
+      <div id="tooladjustments">
+        <input type="checkbox" name="Mid" onclick="valitse_duunikalu(duunikalu)" value="false"> Start from center<br>
+        <input type="checkbox" name="Fill" onclick="valitse_duunikalu(duunikalu)" value="false"> Fill<br>
+        Width<br>
+        <input type="range" name="Width" oninput="valitse_duunikalu(duunikalu)" value=1 min=1 max=80><br>
+        Alpha<br>
+        <input type="range" name="Alpha" oninput="valitse_duunikalu(duunikalu)" value=1 step=0.05 min=0 max=1>
+      </div>
     </div>
     <div class="tools_sarake">
       <input type="button" class="button_l" value="Undo" onclick="socket.emit('command', 'undo')">
@@ -67,10 +68,6 @@
       <input type="button" class="vnap" value=" " style="background:#FFD9B3;" onclick="vaihda_vari('#FFD9B3')">
       <input type="button" class="vnap" value=" " style="background:#111111;" onclick="vaihda_vari('#111111')">
       <input type="button" class="vnap" value=" " style="background:#CC33FF;" onclick="vaihda_vari('#CC33FF')"><br>
-    </div>
-    <div id="koords">
-      X: <input type="text" class="coord" name="MouseX" value="0" size="4"><br>
-      Y: <input type="text" class="coord" name="MouseY" value="0" size="4"><br>
     </div>
   </form>
   </div>

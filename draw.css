@@ -31,20 +31,20 @@ body {
   background-color:white;
   border: 1px solid black;
 }
-#toolpreview {
-  background-color: #F5F5F5;
-  border: 1px solid black;
-}
 #piirtoaika {
-  position: absolute;
-  top: 7px;
-  right: 50px;
+  float: right;
+  padding-top: 3px;
   font-size: 30px;
   font-weight: bold;
   cursor: crosshair;
 }
+#koords {
+  padding-top: 20px;
+  float: left;
+}
 #tools {
   position: absolute;
+  padding-left: 50px;
   top: 555px;
   left: 0px;
   width: 750px;
@@ -55,23 +55,42 @@ body {
   float:left;
   text-align:left;
   padding-top: 5px;
-  padding-left: 20px;
-  padding-right:30px;
+  padding-right: 5px;
+}
+#toolpreview {
+  float: left;
+  margin: 5px;
+  background-color: #F5F5F5;
+  border: 1px solid black;
 }
 #toolbuttons {
-  position: absolute;
-  left: 92px;
-  top: 4px;
+  background-color: #c7e0d9;
+  width: 158px;
+  height: 60px;
+  padding: 6px;
 }
 .tool_button {
+  cursor: pointer;
   background-color: #ffffff;
-  height: 30px;
-  width:  30px;
-  margin-top: 1px;
+  outline: 1px solid gray;
+  outline-offset: 0px;
 }
 .tool_button_clicked {
   outline: 2px solid black;
   outline-offset: -1px;
+}
+#tooladjustments {
+  background-color: #c7e0d9;
+  position: relative;
+  width: 158px;
+  padding-right: 6px;
+  padding-left: 6px;
+}
+input[type=range] {
+  padding: 0px;
+  margin: 0px;
+  width: 158px;
+  cursor: pointer;
 }
 .button_l {
   background-color: #d7f0e9;
@@ -131,14 +150,6 @@ body {
   padding: 0px;
 }
 table#users tr:nth-child(odd) {
-  background-color: #e2fcf4;
-}
-#koords {
-  height: 100%;
-  padding-top: 5px;
-  float: left;
-}
-.coord {
   background-color: #e2fcf4;
 }
 #messages {
