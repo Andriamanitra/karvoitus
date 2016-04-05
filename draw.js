@@ -26,6 +26,7 @@ buttclicked = null,
 scale = 1.0;
 
 valitse_duunikalu(5);
+vaihda_vari("#000000");
 document.getElementById("drawframe").addEventListener("mousemove", getMouseXY);
 
 // no stupid ( / ) icons on certain unusual cases
@@ -195,7 +196,12 @@ function valitse_duunikalu(d) {
   context = drawzone.getContext('2d');
 }
 
+function colorpicker() {
+  document.getElementById("vval").click();
+}
+
 function vaihda_vari(uusi_vari) {
+  document.getElementById('vvalbutton').style.background = uusi_vari;
   Tools.Color.value = uusi_vari;
   valitse_duunikalu(duunikalu);
 }
@@ -597,7 +603,7 @@ function getMouseXY(e) {
   MouseX = (tempX-padd)/scale+padd;
   MouseY = (tempY-padd)/scale+padd;
   // näytä koordinaatit
-  document.getElementById("koords").innerHTML = MouseX+","+MouseY;
+  document.getElementById("koords").innerHTML = getX()+","+getY();
 
   // jos piirto on aloitettu
   if (piirt != 0) {
@@ -687,14 +693,14 @@ $('form').submit(function(){
         scale = (scale % 1) + 0.5;
       }
       else {
-        if (new_scale < 0.1) {scale = 0.1}
+        if (new_scale < 0.2) {scale = 0.2}
         else if (new_scale > 10) {scale = 10}
         else {scale = new_scale}
       }
       drawzone.height = 450*scale;
       drawzone.width = 800*scale;
       document.getElementById('drawframe').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
-      document.getElementById('tools').setAttribute("style","top:"+(450*scale+2*padd+5)+"px;width:"+(800*scale-padd)+"px");
+      document.getElementById('tools').setAttribute("style","top:"+(450*scale+2*padd+5)+"px;width:"+(800*scale+2*padd)+"px");
       document.getElementById('left').setAttribute("style","width:"+(800*scale+2*padd)+"px");
       document.getElementById('right').setAttribute("style","left:"+(800*scale+2*padd)+"px");
       context.lineCap = "round";
