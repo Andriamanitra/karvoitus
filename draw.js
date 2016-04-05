@@ -152,9 +152,9 @@ function valitse_duunikalu(d) {
       break;
     case CIRCLE:
       highlight_button("butt2");
-      piirra_circle(80, 80, 20, hae_c_a_w(), Show.Fill.checked);
+      piirra_circle(80, 80, 20, hae_c_a_w(), Tools.Fill.checked);
       context.setLineDash([3]);
-      if(Show.Mid.checked) {
+      if(Tools.Mid.checked) {
         piirra_line(80, 80, 93, 95, [apuviivacolor, 1, 1], 1);
       }
       else {
@@ -164,9 +164,9 @@ function valitse_duunikalu(d) {
       break;
     case OVAL:
       highlight_button("butt3");
-      piirra_oval(80, 80, 60, 25, hae_c_a_w(), Show.Fill.checked);
+      piirra_oval(80, 80, 60, 25, hae_c_a_w(), Tools.Fill.checked);
       context.setLineDash([3]);
-      if(Show.Mid.checked) {
+      if(Tools.Mid.checked) {
         piirra_line(80, 80, 93, 90, [apuviivacolor, 1, 1], 1);
       }
       else {
@@ -176,9 +176,9 @@ function valitse_duunikalu(d) {
       break;
     case RECT:
       highlight_button("butt4");
-      piirra_rect(60, 65, 40, 30, hae_c_a_w(), Show.Fill.checked);
+      piirra_rect(60, 65, 40, 30, hae_c_a_w(), Tools.Fill.checked);
       context.setLineDash([3]);
-      if(Show.Mid.checked) {
+      if(Tools.Mid.checked) {
         piirra_line(80, 80, 100, 95, [apuviivacolor, 1, 1], 1);
       }
       else {
@@ -196,7 +196,7 @@ function valitse_duunikalu(d) {
 }
 
 function vaihda_vari(uusi_vari) {
-  Show.Color.value = uusi_vari;
+  Tools.Color.value = uusi_vari;
   valitse_duunikalu(duunikalu);
 }
 
@@ -250,7 +250,7 @@ function deklik(event) {
   // piirron alkaessa piirretty ympyrä
   else if ( piirt == FREE) {
     piirt = 0;
-    muodot.push([CIRCLE, x, y, Show.Width.value/2, hae_c_a_w(), true]);
+    muodot.push([CIRCLE, x, y, Tools.Width.value/2, hae_c_a_w(), true]);
     socket.emit('muodot', muodot);
     refrsh();
   }
@@ -258,21 +258,21 @@ function deklik(event) {
 
 // [color, alpha, width]
 function hae_c_a_w() {
-  return [Show.Color.value, Show.Alpha.value, Show.Width.value];
+  return [Tools.Color.value, Tools.Alpha.value, Tools.Width.value];
 }
 
 function aloita_piirto() {
   if (duunikalu == FREE) {
     // piirretään väliaikainen ympyrä alkupisteeseen; ilman tätä ympyrä piirrettäisiin
     // vasta deklikissä
-    piirra_circle(getX(), getY(), Show.Width.value/2, hae_c_a_w(), true);
+    piirra_circle(getX(), getY(), Tools.Width.value/2, hae_c_a_w(), true);
 
     freedraw_koords = [];
     freedraw();
     piirt = FREE;
   }
   else if (duunikalu == FILL) {
-    fill(getX()-padd, getY()-padd, Show.Color.value, Show.Alpha.value);
+    fill(getX()-padd, getY()-padd, Tools.Color.value, Tools.Alpha.value);
   }
   else {
     piirt = duunikalu;
@@ -315,7 +315,7 @@ function viimeistele_piirto() {
 }
 
 function tallenna_line() {
-  if (Show.Mid.checked) {
+  if (Tools.Mid.checked) {
     x = x-(getX()-x);
     y = y-(getY()-y);
   }
@@ -325,27 +325,27 @@ function tallenna_line() {
 
 function tallenna_circle() {
   var r;
-  if (Show.Mid.checked) {
+  if (Tools.Mid.checked) {
     r = Math.sqrt(Math.pow(getX()-x, 2)+Math.pow(getY()-y, 2));
-    muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Tools.Fill.checked]);
   }
   else {
     r = Math.sqrt( Math.pow((getX()-x)/2, 2) + Math.pow((getY()-y)/2, 2));
     x = (parseFloat(getX())+parseFloat(x))/2;
     y = (parseFloat(getY())+parseFloat(y))/2;
-    muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([CIRCLE, x, y, r, hae_c_a_w(), Tools.Fill.checked]);
   }
   piirt = 0;
 }
 
 function tallenna_oval() {
   var x1, y1, lev, kork, x_kesk, y_kesk;
-  if (Show.Mid.checked) {
+  if (Tools.Mid.checked) {
     x1 = getX();
     y1 = getY();
     lev = 1.33*Math.abs(2*(x1-x));
     kork = Math.abs(2*(y1-y));
-    muodot.push([OVAL, x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([OVAL, x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Tools.Fill.checked]);
   }
   else {
     x1 = getX();
@@ -354,7 +354,7 @@ function tallenna_oval() {
     kork = Math.abs(y1-y);
     x_kesk = Math.abs(-x1-x)/2;
     y_kesk = Math.abs(-y1-y)/2;
-    muodot.push([OVAL, x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([OVAL, x_kesk, y_kesk, lev, kork, hae_c_a_w(), Tools.Fill.checked]);
   }
   piirt = 0;
 }
@@ -365,13 +365,13 @@ function tallenna_rect() {
   y1 = getY();
   lev = Math.abs(x-x1);
   kork = Math.abs(y-y1);
-  if (Show.Mid.checked) {
+  if (Tools.Mid.checked) {
     lev = 2*lev;
     kork = 2*kork;
-    muodot.push([RECT, x-Math.abs(x1-x), y-Math.abs(y1-y), lev, kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([RECT, x-Math.abs(x1-x), y-Math.abs(y1-y), lev, kork, hae_c_a_w(), Tools.Fill.checked]);
   }
   else {
-    muodot.push([RECT, Math.min(x, x1), Math.min(y, y1), lev, kork, hae_c_a_w(), Show.Fill.checked]);
+    muodot.push([RECT, Math.min(x, x1), Math.min(y, y1), lev, kork, hae_c_a_w(), Tools.Fill.checked]);
   }
   piirt = 0;
 }
@@ -517,7 +517,7 @@ function refrsh() {
 function tempPiirto(tempX, tempY) {
   if (piirt == LINE) {
     refrsh();
-    if (Show.Mid.checked) {
+    if (Tools.Mid.checked) {
       piirra_line(x-(tempX-x), y-(tempY-y), tempX, tempY, hae_c_a_w());
     }
     else {
@@ -526,15 +526,15 @@ function tempPiirto(tempX, tempY) {
   }
   else if (piirt == CIRCLE) {
     refrsh();
-    if (Show.Mid.checked) {
+    if (Tools.Mid.checked) {
       var r = Math.sqrt(Math.pow(getX()-x, 2)+Math.pow(getY()-y, 2));
-      piirra_circle(x, y, r, hae_c_a_w(), Show.Fill.checked);
+      piirra_circle(x, y, r, hae_c_a_w(), Tools.Fill.checked);
     }
     else {
       var r = Math.sqrt( Math.pow((getX()-x)/2, 2) + Math.pow((getY()-y)/2, 2)),
       x_keskip = (parseFloat(getX())+parseFloat(x))/2,
       y_keskip = (parseFloat(getY())+parseFloat(y))/2;
-      piirra_circle(x_keskip, y_keskip, r, hae_c_a_w(), Show.Fill.checked);
+      piirra_circle(x_keskip, y_keskip, r, hae_c_a_w(), Tools.Fill.checked);
     }
     context.setLineDash([5]);
     piirra_line(x, y, tempX, tempY, [apuviivacolor, 1, 1], 1);
@@ -542,10 +542,10 @@ function tempPiirto(tempX, tempY) {
   }
   else if (piirt == OVAL) {
     refrsh();
-    if (Show.Mid.checked) {
+    if (Tools.Mid.checked) {
       var lev = 1.33*Math.abs(2*(tempX-x)),
       kork = Math.abs(2*(tempY-y));
-      piirra_oval(x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Show.Fill.checked);
+      piirra_oval(x, y, 1.39*lev, 1.39*kork, hae_c_a_w(), Tools.Fill.checked);
       context.setLineDash([5]);
       piirra_line(x, y, tempX, tempY, [apuviivacolor, 1, 1], 1);
       context.setLineDash([]);
@@ -559,16 +559,16 @@ function tempPiirto(tempX, tempY) {
       kork = Math.abs(tempY-y),
       x_kesk = Math.abs(-tempX-x)/2,
       y_kesk = Math.abs(-tempY-y)/2;
-      piirra_oval(x_kesk, y_kesk, lev, kork, hae_c_a_w(), Show.Fill.checked);
+      piirra_oval(x_kesk, y_kesk, lev, kork, hae_c_a_w(), Tools.Fill.checked);
     }
   }
   else if (piirt == RECT) {
     refrsh();
-    if (Show.Mid.checked) {
-      piirra_rect(x-Math.abs(tempX-x), y-Math.abs(tempY-y), 2*Math.abs(x-tempX), 2*Math.abs(y-tempY), hae_c_a_w(), Show.Fill.checked);
+    if (Tools.Mid.checked) {
+      piirra_rect(x-Math.abs(tempX-x), y-Math.abs(tempY-y), 2*Math.abs(x-tempX), 2*Math.abs(y-tempY), hae_c_a_w(), Tools.Fill.checked);
     }
     else {
-      piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), hae_c_a_w(), Show.Fill.checked);
+      piirra_rect(Math.min(x, tempX), Math.min(y, tempY), Math.abs(x-tempX), Math.abs(y-tempY), hae_c_a_w(), Tools.Fill.checked);
     }
   }
   else if (piirt == FREE) {
@@ -591,13 +591,12 @@ function getMouseXY(e) {
   // catch possible negative values in NS4
   if (tempX < 0){tempX = 0}
   if (tempY < 0){tempY = 0}
-  // show the position values in the form named Show
-  // in the text fields named MouseX and MouseY
   if (MouseX != tempX || MouseY != tempY) {
     moved = true;
   }
   MouseX = (tempX-padd)/scale+padd;
   MouseY = (tempY-padd)/scale+padd;
+  // näytä koordinaatit
   document.getElementById("koords").innerHTML = MouseX+","+MouseY;
 
   // jos piirto on aloitettu
