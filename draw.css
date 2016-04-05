@@ -64,7 +64,7 @@ body {
   border: 1px solid black;
 }
 #toolbuttons {
-  background-color: "red";
+  background-color: red;
   width: 158px;
   height: 60px;
   padding: 6px;
@@ -80,7 +80,7 @@ body {
   outline-offset: -1px;
 }
 #tooladjustments {
-  background-color: "red";
+  background-color: red;
   position: relative;
   width: 158px;
   padding-right: 6px;
