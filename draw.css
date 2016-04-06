@@ -92,6 +92,9 @@ body {
   border-left: 1px solid black;
   border-right: 1px solid black;
 }
+input[type=checkbox] {
+  cursor: pointer;
+}
 input[type=range] {
   padding: 0px;
   margin: 0px;
@@ -113,6 +116,7 @@ input[type=range] {
 }
 .button_l {
   background-color: #d7f0e9;
+  cursor: pointer;
   width: 49px;
   margin-right: 4px;
   margin-bottom: 4px;

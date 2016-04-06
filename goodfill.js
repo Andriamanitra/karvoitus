@@ -1,9 +1,10 @@
 function pixeldatamatch(pd0, pd1) {
-  return (pd0.data[0] == pd1.data[0] && pd0.data[1] == pd1.data[1] && pd0.data[2] == pd1.data[2])
+  return (pd0[0] == pd1[0] && pd0[1] == pd1[1] && pd0[2] == pd1[2] && pd0[3] == pd1[3])
 }
 
-function gpd(xx, yy) {
-  return context.getImageData(xx, yy, 1, 1);
+function gpd(xx, yy, data) {
+  var index = (yy*drawzone.width + xx)*4;
+  return data.slice(index, index+4);
 }
 
 // lainafunktio
@@ -16,18 +17,29 @@ function hexToRgb(hex) {
     } : null;
 }
 
-function fill (xx, yy, cc, aa) {
-  var pixeldata0 = gpd(xx, yy);
+function count_m(muoto) {
+  var counter = 0;
+  for (var i = 0; i < muodot.length; i++) {
+    if (muodot[i][0] == muoto) {
+      ++counter;
+    }
+  }
+  return counter;
+}
 
-  var pixeldata1 = gpd(xx, yy);
+function fill (xx, yy, cc, aa) {
+  var imagedata = context.getImageData(0, 0, drawzone.width, drawzone.height);
+  var data = imagedata.data;
+  var pixeldata0 = gpd(xx, yy, data);
+  var rr, gg, bb;
   rgbcc = hexToRgb(cc);
   // blendataan fill taustaväriin
-  pixeldata1.data[0] = rgbcc.r*aa + pixeldata0.data[0]*(1.0-aa);
-  pixeldata1.data[1] = rgbcc.g*aa + pixeldata0.data[1]*(1.0-aa);
-  pixeldata1.data[2] = rgbcc.b*aa + pixeldata0.data[2]*(1.0-aa);
+  rr = rgbcc.r*aa + pixeldata0[0]*(1.0-aa);
+  gg = rgbcc.g*aa + pixeldata0[1]*(1.0-aa);
+  bb = rgbcc.b*aa + pixeldata0[2]*(1.0-aa);
 
   var pixelstack = [[xx, yy]];
-  var pos, reachLeft, reachRight;
+  var pos, reachLeft, reachRight, index;
 
   while(pixelstack.length) {
     pos = pixelstack.pop()
@@ -36,19 +48,23 @@ function fill (xx, yy, cc, aa) {
     reachLeft = false;
     reachRight = false;
     // edetään ylöspäin kunnes törmätään eri väriseen pikseliin
-    while (pixeldatamatch(pixeldata0, gpd(xx, yy))) {
+    while (pixeldatamatch(pixeldata0, gpd(xx, yy, data))) {
       if (yy < 0) {break}
       yy = yy-1;
     }
     yy++;
 
     // edetään alaspäin maalaten matkalta pikselit ja katsoen joka kohdassa sivuille
-    while (y < drawzone.height-1 && pixeldatamatch(pixeldata0, gpd(xx, yy))) {
-      context.putImageData(pixeldata1, xx, yy);
+    while (y < drawzone.height-1 && pixeldatamatch(pixeldata0, gpd(xx, yy, data))) {
+      index = (yy*drawzone.width + xx)*4;
+      data[index] = rr;
+      data[++index] = gg;
+      data[++index] = bb;
+      data[++index] = 255;
 
       // katsotaan vasemmalle
       if (x > 0) {
-        if (pixeldatamatch(pixeldata0, gpd(xx-1, yy))) {
+        if (pixeldatamatch(pixeldata0, gpd(xx-1, yy, data))) {
           if (!reachLeft) {
             pixelstack.push([xx-1, yy]);
             reachLeft = true;
@@ -61,7 +77,7 @@ function fill (xx, yy, cc, aa) {
 
       // katsotaan oikealle
       if (x < drawzone.width-1) {
-        if (pixeldatamatch(pixeldata0, gpd(xx+1, yy))) {
+        if (pixeldatamatch(pixeldata0, gpd(xx+1, yy, data))) {
           if (!reachRight) {
             pixelstack.push([xx+1, yy]);
             reachRight = true;
@@ -74,4 +90,5 @@ function fill (xx, yy, cc, aa) {
       yy++;
     }
   }
+  context.putImageData(imagedata, 0, 0);
 }

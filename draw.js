@@ -21,6 +21,7 @@ OVAL = 3,
 RECT = 4,
 FREE = 5,
 FILL = 6,
+FULL = 7,
 moved = false,
 buttclicked = null,
 scale = 1.0;
@@ -145,7 +146,7 @@ function valitse_duunikalu(d) {
     case FREE:
       highlight_button("butt5");
       piirra_free([66,70,66,68,67,67,69,66,70,65,71,64,73,63,75,63,76,64,76,66,77,67,77,69,76,70,76,72,76,74,
-                   75,75,75,77,75,79,75,81,75,83,76,84,77,85,78,86,81,86, 90, 90, 95,95], hae_c_a_w());
+                   75,75,75,77,75,79,75,81,75,83,76,84,77,85,78,86,81,86,90,90,95,95], hae_c_a_w());
       break;
     case LINE:
       highlight_button("butt1");
@@ -189,6 +190,7 @@ function valitse_duunikalu(d) {
       break;
     case FILL:
       highlight_button("butt6");
+      piirra_rect(50, 50, 60, 60, hae_c_a_w(), true);
       break;
   }
 
@@ -201,8 +203,8 @@ function colorpicker() {
 }
 
 function vaihda_vari(uusi_vari) {
-  document.getElementById('vvalbutton').style.background = uusi_vari;
   Tools.Color.value = uusi_vari;
+  document.getElementById('vvalbutton').style.background = Tools.Color.value;
   valitse_duunikalu(duunikalu);
 }
 
@@ -278,7 +280,21 @@ function aloita_piirto() {
     piirt = FREE;
   }
   else if (duunikalu == FILL) {
-    fill(getX()-padd, getY()-padd, Tools.Color.value, Tools.Alpha.value);
+    // FILLTHINGS
+    // While Fill is not ready for production we use Full instead!
+    muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
+    socket.emit('muodot', muodot);
+    //if (count_m(FULL) == muodot.length) {
+    //  muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
+    //  socket.emit('muodot', muodot);
+    //  return;
+    //}
+    //if (count_m(FILL) > 3) {
+    //  alert("too much fill, fuck you!");
+    //  return;
+    //}
+    //muodot.push([FILL, x, y, Tools.Color.value, Tools.Alpha.value]);
+    //socket.emit('muodot', muodot);
   }
   else {
     piirt = duunikalu;
@@ -296,9 +312,8 @@ function freedraw() {
   }
 }
 
-function fill() {
-  alert("NO FILL AVAILABLE; TOO HARD TO CODE!");
-}
+// FILLTHINGS
+// paste goodfill here
 
 function viimeistele_piirto() {
   if (piirt == LINE) {
@@ -404,6 +419,14 @@ function piirra_muodot() {
     }
     else if (muodot[i][0] == FREE) {
       piirra_free.apply(this, muodot[i].slice(1));
+    }
+    else if (muodot[i][0] == FILL) {
+      // FILLTHINGS
+      piirra_rect(0, 0, 850, 500, [muodot[i][1], muodot[i][2], 1], true);
+      //fill.apply(this, muodot[i].slice(1));
+    }
+    else if (muodot[i][0] == FULL) {
+      piirra_rect(0, 0, 850, 500, [muodot[i][1], muodot[i][2], 1], true);
     }
   }
 }
@@ -630,12 +653,13 @@ function piirtovuoroon() {
 }
 
 function piirtovuorosta() {
+  piirt = 0;
   document.getElementById("drawframe").onmousedown = notyourturn;
   document.getElementById("drawframe").onmouseup = "";
 }
 
 function notyourturn() {
-  appendmsg("** It's not yout turn to draw!")
+  appendmsg("** It's not your turn to draw!")
 }
 
 function toggle_timestamp() {
@@ -706,6 +730,9 @@ $('form').submit(function(){
       context.lineCap = "round";
       context.lineJoin = "round";
       refrsh();
+    }
+    else if (msg_val.slice(1,6) == "color") {
+      vaihda_vari(msg_val.slice(7));
     }
     else {
       socket.emit('command', msg_val.slice(1));
