@@ -7,10 +7,10 @@
   <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   <title>Karvoituspeli</title>
 </head>
-<body onresize="set_offsets()">
+<body onresize="set_offsets()" onmouseup="deklik(event)">
 
 <div id="left">
-  <div id="drawframe" onmousedown="klik(event)" onmouseup="deklik(event)">
+  <div id="drawframe" onmousedown="klik(event)">
     <canvas id="drawzone" width="800" height="450">
     If you see this text HTML5 Canvas is not supported by your browser.
     </canvas>

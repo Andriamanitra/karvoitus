@@ -649,13 +649,11 @@ function getY() {
 
 function piirtovuoroon() {
   document.getElementById("drawframe").onmousedown = klik;
-  document.getElementById("drawframe").onmouseup = deklik;
 }
 
 function piirtovuorosta() {
   piirt = 0;
   document.getElementById("drawframe").onmousedown = notyourturn;
-  document.getElementById("drawframe").onmouseup = "";
 }
 
 function notyourturn() {
