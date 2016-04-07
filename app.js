@@ -16,7 +16,7 @@ app.use(express.static(__dirname));
 app.get('/', function (req, res) {
   // nginxhomma
   proxyaddr(req, '127.0.0.1');
-  console.log("New connection from: "+req.ip);
+  console.log("New connection from "+req.ip);
   res.sendFile(__dirname + '/draw.html');
 });
 var anoncount = 0;
