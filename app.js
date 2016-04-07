@@ -30,15 +30,6 @@ var piirtovuorotime;
 var sana = "";
 var piirtaja = "";
 
-function hae_sana(sanasto) {
-  sanasto = typeof sanasto !== 'undefined' ? sanasto : "sanasto";
-  var db = new sqlite3.Database("karvoitus.db");
-  db.each("SELECT * FROM "+sanasto+" ORDER BY RANDOM() LIMIT 1", function(err, row) {
-    sana = row.sana;
-  });
-  db.close();
-}
-
 function tarkasta_sanasto(sanasto) {
   if (typeof sanasto === "undefined") {
     return "sanasto";
@@ -65,19 +56,23 @@ function aloitapiirtovuoro() {
   muodot = [];
   io.emit('muodot', muodot);
   var piirtaja_id = piirtovuorot[0][0];
+  var sanasto = piirtovuorot[0][1];
   piirtaja = io.sockets.connected[piirtaja_id].username;
   io.emit('draw', false);
-  hae_sana(piirtovuorot[0][1]);
-  setTimeout(function(){
+  sanasto = typeof sanasto !== 'undefined' ? sanasto : "sanasto";
+  var db = new sqlite3.Database("karvoitus.db");
+  db.get("SELECT * FROM "+sanasto+" ORDER BY RANDOM() LIMIT 1", function(err, row) {
+    sana = row.sana;
     console.log(timestamp()+"** "+piirtaja+" is drawing "+sana);
     io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
     io.to(piirtaja_id).emit('draw', true);
-  }, 50);
-  io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
-  io.emit('drawtime', vuoron_pituus/1000);
-  var nyt = new Date();
-  piirtovuorotime = nyt.getTime() + vuoron_pituus;
-  piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
+    io.sockets.connected[piirtaja_id].broadcast.emit('message', "** Now drawing: "+piirtaja);
+    io.emit('drawtime', vuoron_pituus/1000);
+    var nyt = new Date();
+    piirtovuorotime = nyt.getTime() + vuoron_pituus;
+    piirtovuorotimeout = setTimeout(function(){lopetapiirtovuoro(false);}, vuoron_pituus);
+  });
+  db.close();
 }
 
 function lopetapiirtovuoro(arvaaja) {
