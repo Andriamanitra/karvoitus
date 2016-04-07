@@ -16,6 +16,7 @@ app.use(express.static(__dirname));
 app.get('/', function (req, res) {
   // nginxhomma
   proxyaddr(req, '127.0.0.1');
+  console.log("New connection from: "+req.ip);
   res.sendFile(__dirname + '/draw.html');
 });
 var anoncount = 0;
@@ -179,8 +180,7 @@ io.on('connection', function(socket){
   else {
     socket.emit('message', "** The game is in multiplayer free-draw mode because nobody has volunteered to draw... If *YOU* want to draw, use the /draw command!")
   }
-  io.emit('message', "** "+socket.username+" connected");
-  console.log(timestamp()+"** "+socket.username+" connected from ip: "+socket.conn.remoteAddress);
+  emittoi("** "+socket.username+" connected");
   lisaa_user(socket.username)
 
 
