@@ -1,12 +1,20 @@
 var express = require('express');
 var app = express();
+
+// tietokanta
 var sqlite3 = require('sqlite3').verbose();
+
+// ip-osoitteet nginxin läpi
+var proxyaddr = require('proxy-addr');
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
+  // nginxhomma
+  proxyaddr(req, '127.0.0.1');
   res.sendFile(__dirname + '/draw.html');
 });
 var anoncount = 0;
