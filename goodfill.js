@@ -1,4 +1,4 @@
-function pixeldatamatch(pd0, pd1) {
+function pdm(pd0, pd1) {
   return (pd0[0] == pd1[0] && pd0[1] == pd1[1] && pd0[2] == pd1[2] && pd0[3] == pd1[3])
 }
 
@@ -30,13 +30,13 @@ function count_m(muoto) {
 function fill (xx, yy, cc, aa) {
   var imagedata = context.getImageData(0, 0, drawzone.width, drawzone.height);
   var data = imagedata.data;
-  var pixeldata0 = gpd(xx, yy, data);
+  var fillcolor = gpd(xx, yy, data);
   var rr, gg, bb;
   rgbcc = hexToRgb(cc);
   // blendataan fill taustaväriin
-  rr = rgbcc.r*aa + pixeldata0[0]*(1.0-aa);
-  gg = rgbcc.g*aa + pixeldata0[1]*(1.0-aa);
-  bb = rgbcc.b*aa + pixeldata0[2]*(1.0-aa);
+  rr = rgbcc.r*aa + fillcolor[0]*(1.0-aa);
+  gg = rgbcc.g*aa + fillcolor[1]*(1.0-aa);
+  bb = rgbcc.b*aa + fillcolor[2]*(1.0-aa);
 
   var pixelstack = [[xx, yy]];
   var pos, reachLeft, reachRight, index;
@@ -48,14 +48,14 @@ function fill (xx, yy, cc, aa) {
     reachLeft = false;
     reachRight = false;
     // edetään ylöspäin kunnes törmätään eri väriseen pikseliin
-    while (pixeldatamatch(pixeldata0, gpd(xx, yy, data))) {
+    while (pdm(fillcolor, gpd(xx, yy, data))) {
       if (yy < 0) {break}
       yy = yy-1;
     }
     yy++;
 
     // edetään alaspäin maalaten matkalta pikselit ja katsoen joka kohdassa sivuille
-    while (y < drawzone.height-1 && pixeldatamatch(pixeldata0, gpd(xx, yy, data))) {
+    while (y < drawzone.height-1 && pdm(fillcolor, gpd(xx, yy, data))) {
       index = (yy*drawzone.width + xx)*4;
       data[index] = rr;
       data[++index] = gg;
@@ -64,7 +64,7 @@ function fill (xx, yy, cc, aa) {
 
       // katsotaan vasemmalle
       if (x > 0) {
-        if (pixeldatamatch(pixeldata0, gpd(xx-1, yy, data))) {
+        if (pdm(fillcolor, gpd(xx-1, yy, data))) {
           if (!reachLeft) {
             pixelstack.push([xx-1, yy]);
             reachLeft = true;
@@ -77,7 +77,7 @@ function fill (xx, yy, cc, aa) {
 
       // katsotaan oikealle
       if (x < drawzone.width-1) {
-        if (pixeldatamatch(pixeldata0, gpd(xx+1, yy, data))) {
+        if (pdm(fillcolor, gpd(xx+1, yy, data))) {
           if (!reachRight) {
             pixelstack.push([xx+1, yy]);
             reachRight = true;
