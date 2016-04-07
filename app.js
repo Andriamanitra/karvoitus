@@ -28,21 +28,44 @@ var piirtovuorotime;
 var sana = "";
 var piirtaja = "";
 
-function hae_sana() {
+function hae_sana(sanasto) {
+  sanasto = typeof sanasto !== 'undefined' ? sanasto : "sanasto";
   var db = new sqlite3.Database("karvoitus.db");
-  db.each("SELECT * FROM sanasto ORDER BY RANDOM() LIMIT 1", function(err, row) {
+  db.each("SELECT * FROM "+sanasto+" ORDER BY RANDOM() LIMIT 1", function(err, row) {
     sana = row.sana;
   });
   db.close();
 }
 
+function tarkasta_sanasto(sanasto) {
+  if (typeof sanasto === "undefined") {
+    return "sanasto";
+  }
+  else if (sanasto.startsWith("s")) {
+    return "substantiivit";
+  }
+  else if (sanasto.startsWith("a")) {
+    return "adjektiivit";
+  }
+  else if (sanasto.startsWith("v")) {
+    return "verbit";
+  }
+  else if (sanasto.startsWith("test")) {
+    return "testisanasto";
+  }
+  else if (sanasto.startsWith("monster")) {
+    return "monsterisanat";
+  }
+  return "sanasto";
+}
+
 function aloitapiirtovuoro() {
   muodot = [];
   io.emit('muodot', muodot);
-  var piirtaja_id = piirtovuorot[0];
+  var piirtaja_id = piirtovuorot[0][0];
   piirtaja = io.sockets.connected[piirtaja_id].username;
   io.emit('draw', false);
-  hae_sana();
+  hae_sana(piirtovuorot[0][1]);
   setTimeout(function(){
     console.log(timestamp()+"** "+piirtaja+" is drawing "+sana);
     io.to(piirtaja_id).emit('message', "** It's your turn to draw! Draw this word: "+sana);
@@ -78,9 +101,7 @@ function lopetapiirtovuoro(arvaaja) {
 }
 
 function piirtoaikaaLeft() {
-  console.log(piirtovuorotime);
   var nyt = new Date();
-  console.log(nyt.getTime());
   return Math.ceil((piirtovuorotime-nyt.getTime())/1000);
 }
 
@@ -108,7 +129,7 @@ function send_users() {
   var usertable = [];
   var ei_piirtajat = userlist.slice(0);
   for (var i = 0; i < piirtovuorot.length; i++) {
-    var usern = io.sockets.connected[piirtovuorot[i]].username;
+    var usern = io.sockets.connected[piirtovuorot[i][0]].username;
     usertable.push([i.toString(), usern]);
     var ind = ei_piirtajat.indexOf(usern);
     if(ind > -1) {
@@ -135,6 +156,15 @@ function timestamp() {
   return "["+timestring+"] ";
 }
 
+function piirtovuoronro(sockid) {
+  for (var i = 0; i < piirtovuorot.length; ++i) {
+    if (piirtovuorot[i][0] == sockid) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 io.on('connection', function(socket){
   socket.username = "~anon"+("0000"+anoncount).slice(-4);
   anoncount += 1;
@@ -156,14 +186,13 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
     console.log(timestamp()+socket.username+' disconnected');
     io.emit('message', "** "+socket.username+" disconnected");
-    var ind = piirtovuorot.indexOf(socket.id);
-    if (ind > -1) {
-      if (ind == 0) {
-        lopetapiirtovuoro();
-      }
-      else {
-        piirtovuorot.splice(ind, 1);
-      }
+
+    var pvn = piirtovuoronro(socket.id);
+    if (pvn == 0) {
+      lopetapiirtovuoro();
+    }
+    else if (pvn != -1) {
+      piirtovuorot.splice(pvn, 1);
     }
     poista_user(socket.username);
   });
@@ -178,20 +207,20 @@ io.on('connection', function(socket){
 
   socket.on('command', function(data){
     if (data == "clear"){
-      if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
+      if (piirtovuorot.length == 0 || piirtovuoronumero(socket.id) == 0) {
         muodot = [];
         io.emit('muodot', muodot);
       }
     }
     else if (data == "undo"){
-      if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
+      if (piirtovuorot.length == 0 || piirtovuoronro(socket.id) == 0) {
         muodot = muodot.slice(0, muodot.length-1);
         io.emit('muodot', muodot);
       }
     }
     else if (data.split(" ")[0] == "nick") {
       var new_nick = data.split(" ")[1];
-      if (new_nick.length > 2 && new_nick.length <= 16) {
+      if (typeof new_nick !== 'undefined' && new_nick.length > 2 && new_nick.length <= 16) {
         var msg = "* " + socket.username + " is now known as " + new_nick;
         vaihda_user(socket.username, new_nick);
         socket.username = new_nick;
@@ -204,12 +233,14 @@ io.on('connection', function(socket){
         socket.emit('message', "** Nickname must be 3..16 characters!");
       }
     }
-    else if (data == "draw"){
-      if (piirtovuorot.indexOf(socket.id) != -1) {
+    else if (data.split(" ")[0] == "draw") {
+      if (piirtovuoronro(socket.id) != -1) {
         socket.emit('message', "** You are already in draw Q!");
       }
       else {
-        piirtovuorot.push(socket.id);
+        var sanasto = data.split(" ")[1];
+        sanasto = tarkasta_sanasto(sanasto);
+        piirtovuorot.push([socket.id, sanasto]);
         send_users();
         if (piirtovuorot.length == 1) {
           aloitapiirtovuoro();
@@ -223,7 +254,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('muodot', function(muod){
-    if (piirtovuorot.length == 0 || piirtovuorot[0] == socket.id) {
+    if (piirtovuorot.length == 0 || piirtovuoronumero(socket.id)) {
       if (muod.length > muodot_max_length) {
         muodot = muod.slice(muod.length-muodot_max_length);
       }
