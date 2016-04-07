@@ -6,6 +6,7 @@ var sqlite3 = require('sqlite3').verbose();
 
 // ip-osoitteet nginxin läpi
 var proxyaddr = require('proxy-addr');
+app.enable('trust proxy');
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
