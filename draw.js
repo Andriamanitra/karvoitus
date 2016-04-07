@@ -537,11 +537,13 @@ function refrsh() {
 }
 
 function cleartemp() {
-  tempdrawzone.getContext('2d').clearRect(0, 0, drawzone.width, drawzone.height);
+  tempdrawzone.getContext('2d').clearRect(0, 0, tempdrawzone.width, tempdrawzone.height);
 }
 
 function tempPiirto(tempX, tempY) {
   context = tempdrawzone.getContext('2d');
+  var temp_scale = scale;
+  scale = 1;
   context.lineCap = "round";
   context.lineJoin = "round";
   if (piirt == LINE) {
@@ -604,6 +606,7 @@ function tempPiirto(tempX, tempY) {
     cleartemp();
     piirra_free(freedraw_koords, hae_c_a_w());
   }
+  scale = temp_scale;
   context = drawzone.getContext('2d');
 }
 
@@ -723,7 +726,7 @@ $('form').submit(function(){
       drawzone.height = 450*scale;
       drawzone.width = 800*scale;
       document.getElementById('drawframe').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
-      //document.getElementById('tempdrawzone').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
+      document.getElementById('tempdrawzone').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
       document.getElementById('tools').setAttribute("style","top:"+(450*scale+2*padd+5)+"px;width:"+(800*scale+2*padd)+"px");
       document.getElementById('left').setAttribute("style","width:"+(800*scale+2*padd)+"px");
       document.getElementById('right').setAttribute("style","left:"+(800*scale+2*padd)+"px");
