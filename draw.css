@@ -22,6 +22,7 @@ body {
   height: calc(100% - 10px);
 }
 #drawframe {
+  position: relative;
   cursor: crosshair;
   width: 800px;
   height: 450px;
@@ -29,8 +30,14 @@ body {
   padding: 50px;
 }
 #drawzone {
+  position: absolute;
   background-color:white;
   border: 1px solid black;
+}
+#tempdrawzone {
+  position: absolute;
+  background-color: rgba(0,0,0,0);
+  border: 1px solid transparent;
 }
 #piirtoaika {
   float: right;
@@ -40,7 +47,8 @@ body {
   cursor: crosshair;
 }
 #koords {
-  padding-top: 20px;
+  position: absolute;
+  bottom: 15px;
   float: left;
 }
 #tools {

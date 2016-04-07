@@ -1,4 +1,5 @@
 drawzone = document.getElementById('drawzone'),
+tempdrawzone = document.getElementById('tempdrawzone'),
 drawframe = document.getElementById('drawframe'),
 frameLeft = drawframe.offsetLeft,
 frameTop = drawframe.offsetTop,
@@ -219,7 +220,7 @@ function klik(event) {
   // right click; peruuttaa nykyisen piirron
   if (event.button == 2) {
     piirt = 0;
-    refrsh();
+    cleartemp();
   }
   // middle click; värivalitsin
   else if (event.button == 1) {
@@ -260,7 +261,7 @@ function deklik(event) {
     piirt = 0;
     muodot.push([CIRCLE, x, y, Tools.Width.value/2, hae_c_a_w(), true]);
     socket.emit('muodot', muodot);
-    refrsh();
+    cleartemp();
   }
 }
 
@@ -280,21 +281,18 @@ function aloita_piirto() {
     piirt = FREE;
   }
   else if (duunikalu == FILL) {
-    // FILLTHINGS
-    // While Fill is not ready for production we use Full instead!
-    muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
+    if (count_m(FULL) == muodot.length) {
+      console.log("fulling");
+      muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
+      socket.emit('muodot', muodot);
+      return;
+    }
+    if (count_m(FILL) > 10) {
+      alert("too much fill, fuck you!");
+      return;
+    }
+    muodot.push([FILL, x-padd, y-padd, Tools.Color.value, Tools.Alpha.value]);
     socket.emit('muodot', muodot);
-    //if (count_m(FULL) == muodot.length) {
-    //  muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
-    //  socket.emit('muodot', muodot);
-    //  return;
-    //}
-    //if (count_m(FILL) > 3) {
-    //  alert("too much fill, fuck you!");
-    //  return;
-    //}
-    //muodot.push([FILL, x, y, Tools.Color.value, Tools.Alpha.value]);
-    //socket.emit('muodot', muodot);
   }
   else {
     piirt = duunikalu;
@@ -311,9 +309,6 @@ function freedraw() {
     viimeistele_piirto();
   }
 }
-
-// FILLTHINGS
-// paste goodfill here
 
 function viimeistele_piirto() {
   if (piirt == LINE) {
@@ -332,7 +327,7 @@ function viimeistele_piirto() {
     tallenna_free();
   }
   socket.emit('muodot', muodot);
-  refrsh();
+  cleartemp();
 }
 
 function tallenna_line() {
@@ -399,7 +394,7 @@ function tallenna_rect() {
 
 function tallenna_free() {
   muodot.push([FREE, freedraw_koords, hae_c_a_w()]);
-  refrsh();
+  cleartemp();
   piirt = 0;
 }
 
@@ -421,9 +416,7 @@ function piirra_muodot() {
       piirra_free.apply(this, muodot[i].slice(1));
     }
     else if (muodot[i][0] == FILL) {
-      // FILLTHINGS
-      piirra_rect(0, 0, 850, 500, [muodot[i][1], muodot[i][2], 1], true);
-      //fill.apply(this, muodot[i].slice(1));
+      drawfill.apply(this, muodot[i].slice(1));
     }
     else if (muodot[i][0] == FULL) {
       piirra_rect(0, 0, 850, 500, [muodot[i][1], muodot[i][2], 1], true);
@@ -543,9 +536,16 @@ function refrsh() {
   piirra_muodot();
 }
 
+function cleartemp() {
+  tempdrawzone.getContext('2d').clearRect(0, 0, drawzone.width, drawzone.height);
+}
+
 function tempPiirto(tempX, tempY) {
+  context = tempdrawzone.getContext('2d');
+  context.lineCap = "round";
+  context.lineJoin = "round";
   if (piirt == LINE) {
-    refrsh();
+    cleartemp();
     if (Tools.Mid.checked) {
       piirra_line(x-(tempX-x), y-(tempY-y), tempX, tempY, hae_c_a_w());
     }
@@ -554,7 +554,7 @@ function tempPiirto(tempX, tempY) {
     }
   }
   else if (piirt == CIRCLE) {
-    refrsh();
+    cleartemp();
     if (Tools.Mid.checked) {
       var r = Math.sqrt(Math.pow(getX()-x, 2)+Math.pow(getY()-y, 2));
       piirra_circle(x, y, r, hae_c_a_w(), Tools.Fill.checked);
@@ -570,7 +570,7 @@ function tempPiirto(tempX, tempY) {
     context.setLineDash([]);
   }
   else if (piirt == OVAL) {
-    refrsh();
+    cleartemp();
     if (Tools.Mid.checked) {
       var lev = 1.33*Math.abs(2*(tempX-x)),
       kork = Math.abs(2*(tempY-y));
@@ -592,7 +592,7 @@ function tempPiirto(tempX, tempY) {
     }
   }
   else if (piirt == RECT) {
-    refrsh();
+    cleartemp();
     if (Tools.Mid.checked) {
       piirra_rect(x-Math.abs(tempX-x), y-Math.abs(tempY-y), 2*Math.abs(x-tempX), 2*Math.abs(y-tempY), hae_c_a_w(), Tools.Fill.checked);
     }
@@ -601,9 +601,10 @@ function tempPiirto(tempX, tempY) {
     }
   }
   else if (piirt == FREE) {
-    refrsh();
+    cleartemp();
     piirra_free(freedraw_koords, hae_c_a_w());
   }
+  context = drawzone.getContext('2d');
 }
 
 
@@ -722,6 +723,7 @@ $('form').submit(function(){
       drawzone.height = 450*scale;
       drawzone.width = 800*scale;
       document.getElementById('drawframe').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
+      //document.getElementById('tempdrawzone').setAttribute("style","height:"+(450*scale)+"px;width:"+(800*scale)+"px");
       document.getElementById('tools').setAttribute("style","top:"+(450*scale+2*padd+5)+"px;width:"+(800*scale+2*padd)+"px");
       document.getElementById('left').setAttribute("style","width:"+(800*scale+2*padd)+"px");
       document.getElementById('right').setAttribute("style","left:"+(800*scale+2*padd)+"px");
@@ -744,3 +746,109 @@ $('form').submit(function(){
   $('#msg').val('');
   return false;
 });
+
+
+
+// goodfill!
+
+function pdm(pd0, pd1) {
+  return (pd0[0] == pd1[0] && pd0[1] == pd1[1] && pd0[2] == pd1[2] && pd0[3] == pd1[3]);
+}
+
+function gpd(xx, yy, data) {
+  var index = (yy*drawzone.width + xx)*4;
+  if (data[index+3] == 0) {return [255, 255, 255, 0];}
+  return [data[index], data[++index], data[++index], data[++index]];
+}
+
+// lainafunktio
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function count_m(muoto) {
+  var counter = 0;
+  for (var i = 0; i < muodot.length; i++) {
+    if (muodot[i][0] == muoto) {
+      ++counter;
+    }
+  }
+  return counter;
+}
+
+function drawfill (xx, yy, cc, aa) {
+  xx = scale*xx;
+  yy = scale*yy;
+  var imagedata = context.getImageData(0, 0, drawzone.width, drawzone.height);
+  var data = imagedata.data;
+  var fillcolor = gpd(xx, yy, data);
+  var rr, gg, bb;
+  rgbcc = hexToRgb(cc);
+  // blendataan fill taustaväriin
+  fillcolor[0] = fillcolor[0]*fillcolor[3]/255 + 255*(1.0-fillcolor[3]/255);
+  fillcolor[1] = fillcolor[1]*fillcolor[3]/255 + 255*(1.0-fillcolor[3]/255);
+  fillcolor[2] = fillcolor[2]*fillcolor[3]/255 + 255*(1.0-fillcolor[3]/255);
+
+  rr = rgbcc.r*aa + fillcolor[0]*(1.0-aa);
+  gg = rgbcc.g*aa + fillcolor[1]*(1.0-aa);
+  bb = rgbcc.b*aa + fillcolor[2]*(1.0-aa);
+
+  var pixelstack = [[xx, yy]];
+  var pos, reachLeft, reachRight, index;
+
+  while(pixelstack.length) {
+    pos = pixelstack.pop()
+    xx = pos[0];
+    yy = pos[1];
+    reachLeft = false;
+    reachRight = false;
+    // edetään ylöspäin kunnes törmätään eri väriseen pikseliin
+    while (pdm(fillcolor, gpd(xx, yy, data))) {
+      if (yy < 0) {break}
+      yy = yy-1;
+    }
+    yy++;
+
+    // edetään alaspäin maalaten matkalta pikselit ja katsoen joka kohdassa sivuille
+    while (y < drawzone.height-1 && pdm(fillcolor, gpd(xx, yy, data))) {
+      index = (yy*drawzone.width + xx)*4;
+      data[index] = rr;
+      data[++index] = gg;
+      data[++index] = bb;
+      data[++index] = 255;
+
+      // katsotaan vasemmalle
+      if (xx > 0) {
+        if (pdm(fillcolor, gpd(xx-1, yy, data))) {
+          if (!reachLeft) {
+            pixelstack.push([xx-1, yy]);
+            reachLeft = true;
+          }
+        }
+        else if(reachLeft) {
+          reachLeft = false;
+        }
+      }
+
+      // katsotaan oikealle
+      if (xx < drawzone.width-1) {
+        if (pdm(fillcolor, gpd(xx+1, yy, data))) {
+          if (!reachRight) {
+            pixelstack.push([xx+1, yy]);
+            reachRight = true;
+          }
+        }
+        else if (reachRight) {
+          reachRight = false;
+        }
+      }
+      yy++;
+    }
+  }
+  context.putImageData(imagedata, 0, 0);
+}
