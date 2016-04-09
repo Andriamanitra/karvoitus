@@ -10,13 +10,13 @@
 <body onresize="set_offsets()" onmouseup="deklik(event)">
 
 <div id="left">
-  <div id="drawframe" onmousedown="klik(event)">
+  <div id="drawframe" class="unselectable" onmousedown="klik(event)">
     <canvas id="drawzone" width="800" height="450">
     If you see this text HTML5 Canvas is not supported by your browser.
     </canvas>
     <canvas id="tempdrawzone" width="800" height="450"></canvas>
-    <div id="piirtoaika" class="unselectable"></div>
-    <div id="koords" class="unselectable">0,0</div>
+    <div id="piirtoaika"></div>
+    <div id="koords">0,0</div>
   </div>
 
   <div id="tools">

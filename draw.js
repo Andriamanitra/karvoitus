@@ -274,25 +274,30 @@ function aloita_piirto() {
   if (duunikalu == FREE) {
     // piirretään väliaikainen ympyrä alkupisteeseen; ilman tätä ympyrä piirrettäisiin
     // vasta deklikissä
+    context = tempdrawzone.getContext('2d');
+  	var temp_scale = scale;
+  	scale = 1;
     piirra_circle(getX(), getY(), Tools.Width.value/2, hae_c_a_w(), true);
+    context = drawzone.getContext('2d');
+    scale = temp_scale;
 
     freedraw_koords = [];
     freedraw();
     piirt = FREE;
   }
   else if (duunikalu == FILL) {
-    if (count_m(FULL) == muodot.length) {
-      console.log("fulling");
+  	//fuck this stupid fill
+    //if (count_m(FULL) == muodot.length) {
       muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
       socket.emit('muodot', muodot);
       return;
-    }
-    if (count_m(FILL) > 10) {
-      alert("too much fill, fuck you!");
-      return;
-    }
-    muodot.push([FILL, x-padd, y-padd, Tools.Color.value, Tools.Alpha.value]);
-    socket.emit('muodot', muodot);
+    //}
+    //if (count_m(FILL) > 10) {
+    //  alert("too much fill, fuck you!");
+    //  return;
+    //}
+    //muodot.push([FILL, x-padd, y-padd, Tools.Color.value, Tools.Alpha.value]);
+    //socket.emit('muodot', muodot);
   }
   else {
     piirt = duunikalu;
@@ -416,7 +421,8 @@ function piirra_muodot() {
       piirra_free.apply(this, muodot[i].slice(1));
     }
     else if (muodot[i][0] == FILL) {
-      drawfill.apply(this, muodot[i].slice(1));
+      //fuck this stupid shit fill
+      //drawfill.apply(this, muodot[i].slice(1));
     }
     else if (muodot[i][0] == FULL) {
       piirra_rect(0, 0, 850, 500, [muodot[i][1], muodot[i][2], 1], true);
@@ -626,6 +632,9 @@ function getMouseXY(e) {
   if (tempY < 0){tempY = 0}
   if (MouseX != tempX || MouseY != tempY) {
     moved = true;
+    if (piirt == 5) {
+      freedraw();
+    }
   }
   MouseX = (tempX-padd)/scale+padd;
   MouseY = (tempY-padd)/scale+padd;
@@ -634,9 +643,6 @@ function getMouseXY(e) {
 
   // jos piirto on aloitettu
   if (piirt != 0) {
-    if (piirt == 5) {
-      freedraw();
-    }
     tempPiirto(MouseX, MouseY);
   }
 
