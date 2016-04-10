@@ -250,7 +250,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('muodot', function(muod){
-    if (piirtovuorot.length == 0 || piirtovuoronro(socket.id)) == 0 {
+    if (piirtovuorot.length == 0 || piirtovuoronro(socket.id) == 0 {
       if (muod.length > muodot_max_length) {
         muodot = muod.slice(muod.length-muodot_max_length);
       }
