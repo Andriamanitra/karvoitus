@@ -203,7 +203,7 @@ io.on('connection', function(socket){
 
   socket.on('command', function(data){
     if (data == "clear"){
-      if (piirtovuorot.length == 0 || piirtovuoronumero(socket.id) == 0) {
+      if (piirtovuorot.length == 0 || piirtovuoronro(socket.id) == 0) {
         muodot = [];
         io.emit('muodot', muodot);
       }
@@ -250,7 +250,7 @@ io.on('connection', function(socket){
   });
 
   socket.on('muodot', function(muod){
-    if (piirtovuorot.length == 0 || piirtovuoronumero(socket.id)) {
+    if (piirtovuorot.length == 0 || piirtovuoronro(socket.id)) == 0 {
       if (muod.length > muodot_max_length) {
         muodot = muod.slice(muod.length-muodot_max_length);
       }
