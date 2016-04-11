@@ -20,7 +20,7 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/draw.html');
 });
 var anoncount = 0;
-var muodot_max_length = 500;
+var muodot_max_length = 1200;
 var vuoron_pituus = 120000; // millisekunteina
 var muodot = [];
 var userlist = [];
