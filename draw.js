@@ -741,7 +741,13 @@ $('form').submit(function(){
       refrsh();
     }
     else if (msg_val.slice(1,6) == "color") {
-      vaihda_vari(msg_val.slice(7));
+      if (msg_val.length < 8) {
+        appendmsg("-- Current color is "+Tools.Color.value);
+      }
+      else {
+        vaihda_vari(msg_val.slice(7));
+        appendmsg("-- Changed color to "+Tools.Color.value);
+      }
     }
     else {
       socket.emit('command', msg_val.slice(1));
