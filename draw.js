@@ -225,7 +225,7 @@ function klik(event) {
   // middle click; värivalitsin
   else if (event.button == 1) {
     event.preventDefault();
-    var pixel = context.getImageData(getX()-padd, getY()-padd, 1, 1).data;
+    var pixel = context.getImageData(scale*(getX()-padd), scale*(getY()-padd), 1, 1).data;
     var alpha = pixel[3]/255;
 
     // blendataan jotta värivalitsin ottaa oikean värin myös pikseleissä
