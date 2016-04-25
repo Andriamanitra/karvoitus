@@ -659,11 +659,31 @@ function getY() {
 
 function piirtovuoroon() {
   document.getElementById("drawframe").onmousedown = klik;
+  // show tools
+  toggletools(false);
 }
 
 function piirtovuorosta() {
   piirt = 0;
   document.getElementById("drawframe").onmousedown = notyourturn;
+  // hide tools
+  toggletools(true);
+}
+
+function toggletools(hidetools) {
+  // toggle if no parameter given
+  if (typeof hidetools == "undefined") {
+    hidetools = (document.getElementById("tools1").style.display == "");
+  }
+
+  if (hidetools) {
+    document.getElementById("tools1").style.display="none";
+    document.getElementById("tools2").style.display="none";
+  }
+  else {
+    document.getElementById("tools1").style.display="";
+    document.getElementById("tools2").style.display="";
+  }
 }
 
 function notyourturn() {
@@ -748,6 +768,9 @@ $('form').submit(function(){
         vaihda_vari(msg_val.slice(7));
         appendmsg("-- Changed color to "+Tools.Color.value);
       }
+    }
+    else if (msg_val.slice(1,11) == "toggletool") {
+      toggletools();
     }
     else {
       socket.emit('command', msg_val.slice(1));
