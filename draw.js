@@ -4,6 +4,7 @@ drawframe = document.getElementById('drawframe'),
 frameLeft = drawframe.offsetLeft,
 frameTop = drawframe.offsetTop,
 context = drawzone.getContext('2d'),
+paletti = document.getElementById("paletti"),
 apuviivacolor = "#C0C0C0",
 x = 0,
 y = 0,
@@ -28,8 +29,10 @@ buttclicked = null,
 scale = 1.0;
 
 valitse_duunikalu(5);
-vaihda_vari("#000000");
 document.getElementById("drawframe").addEventListener("mousemove", getMouseXY);
+
+// dirty fix for updating preview
+document.onclick = function() {valitse_duunikalu(duunikalu)};
 
 // no stupid ( / ) icons on certain unusual cases
 drawzone.ondragstart = function() { return false; };
@@ -199,13 +202,8 @@ function valitse_duunikalu(d) {
   context = drawzone.getContext('2d');
 }
 
-function colorpicker() {
-  document.getElementById("vval").click();
-}
-
 function vaihda_vari(uusi_vari) {
-  Tools.Color.value = uusi_vari;
-  document.getElementById('vvalbutton').style.background = Tools.Color.value;
+  paletti.setAttribute("value", uusi_vari);
   valitse_duunikalu(duunikalu);
 }
 
@@ -267,7 +265,7 @@ function deklik(event) {
 
 // [color, alpha, width]
 function hae_c_a_w() {
-  return [Tools.Color.value, Tools.Alpha.value, Tools.Width.value];
+  return [paletti.value, Tools.Alpha.value, Tools.Width.value];
 }
 
 function aloita_piirto() {
@@ -288,7 +286,7 @@ function aloita_piirto() {
   else if (duunikalu == FILL) {
   	//fuck this stupid fill
     //if (count_m(FULL) == muodot.length) {
-      muodot.push([FULL, Tools.Color.value, Tools.Alpha.value]);
+      muodot.push([FULL, paletti.value, Tools.Alpha.value]);
       socket.emit('muodot', muodot);
       return;
     //}
@@ -296,7 +294,7 @@ function aloita_piirto() {
     //  alert("too much fill, fuck you!");
     //  return;
     //}
-    //muodot.push([FILL, x-padd, y-padd, Tools.Color.value, Tools.Alpha.value]);
+    //muodot.push([FILL, x-padd, y-padd, paletti.value, Tools.Alpha.value]);
     //socket.emit('muodot', muodot);
   }
   else {
@@ -762,11 +760,11 @@ $('form').submit(function(){
     }
     else if (msg_val.slice(1,6) == "color") {
       if (msg_val.length < 8) {
-        appendmsg("-- Current color is "+Tools.Color.value);
+        appendmsg("-- Current color is "+paletti.value);
       }
       else {
         vaihda_vari(msg_val.slice(7));
-        appendmsg("-- Changed color to "+Tools.Color.value);
+        appendmsg("-- Changed color to "+paletti.value);
       }
     }
     else if (msg_val.slice(1,11) == "toggletool") {

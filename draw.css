@@ -109,18 +109,12 @@ input[type=range] {
   width: 158px;
   cursor: pointer;
 }
-#tools2 {
-  height: 100%;
+color-palette {
   float: left;
-  margin-left: 5px;
-  text-align: left;
-  padding-top: 5px;
-  border: 1px black solid;
-  margin-bottom: 5px;
-}
-#vvalbutton {
-  background: black;
-  margin-left: 6px;
+  outline: 1px solid #aaa;
+  margin: 5px;
+  display: flex;
+  width: 330px;
 }
 .button_l {
   background-color: #d7f0e9;
@@ -128,35 +122,6 @@ input[type=range] {
   width: 49px;
   margin-right: 4px;
   margin-bottom: 4px;
-}
-/* Värin valinta */
-#varit {
-  width: 225px;
-  padding: 4px;
-}
-#vval {
-  position: absolute;
-  left: -5000px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-/* Värinvaihtonapit */
-.vnap {
-  cursor: pointer;
-  font-size: 8px;
-  height: 30px;
-  width: 30px;
-  margin: 2px;
-  border-collapse: separate;
-  border-style: solid;
-  border-width: 3px;
-  border-color: rgb(77,77,77);
-  border-radius: 10px;
-}
-.vnap:hover {
-  border-color: rgb(123,123,123);
 }
 #userlist {
   float: right;

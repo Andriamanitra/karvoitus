@@ -5,6 +5,8 @@
   <link rel="stylesheet" type="text/css" href="draw.css">
   <script src="socket.io-1.7.3.min.js"></script>
   <script src="jquery-3.1.1.min.js"></script>
+  <script src="colorpalette.js"></script>
+  <script src="draw.js" defer></script>
   <title>Karvoituspeli</title>
 </head>
 <body onresize="set_offsets()" onmouseup="deklik(event)">
@@ -42,45 +44,10 @@
         <input type="range" name="Alpha" oninput="valitse_duunikalu(duunikalu)" value=1 step=0.05 min=0 max=1>
       </div>
     </div>
-    <div id="tools2">
-      <input type="color" id="vval" name="Color" value="#000000" onchange="vaihda_vari(Color.value)">
-      <input type="button" id="vvalbutton" class="button_l" value=" " onclick="colorpicker()">
-      <input type="button" class="button_l" value="Undo" onclick="socket.emit('command', 'undo')">
-      <input type="button" class="button_l" value="Clear" onclick="socket.emit('command', 'clear')">
-      <input type="button" class="button_l" value="Save" onclick="downloadCanvas()">
-      <div id="varit">
-        <input type="button" class="vnap" style="background:#000000;" onclick="vaihda_vari('#000000')">
-        <input type="button" class="vnap" style="background:#353535;" onclick="vaihda_vari('#353535')">
-        <input type="button" class="vnap" style="background:#696969;" onclick="vaihda_vari('#696969')">
-        <input type="button" class="vnap" style="background:#9E9E9E;" onclick="vaihda_vari('#9E9E9E')">
-        <input type="button" class="vnap" style="background:#C0C0C0;" onclick="vaihda_vari('#C0C0C0')">
-        <input type="button" class="vnap" style="background:#FFFFFF;" onclick="vaihda_vari('#FFFFFF')">
-        <input type="button" class="vnap" style="background:#FF0000;" onclick="vaihda_vari('#FF0000')">
-        <input type="button" class="vnap" style="background:#FFFF00;" onclick="vaihda_vari('#FFFF00')">
-        <input type="button" class="vnap" style="background:#00FF00;" onclick="vaihda_vari('#00FF00')">
-        <input type="button" class="vnap" style="background:#00FFFF;" onclick="vaihda_vari('#00FFFF')">
-        <input type="button" class="vnap" style="background:#0000FF;" onclick="vaihda_vari('#0000FF')">
-        <input type="button" class="vnap" style="background:#FF00FF;" onclick="vaihda_vari('#FF00FF')">
-        <input type="button" class="vnap" style="background:#880000;" onclick="vaihda_vari('#880000')">
-        <input type="button" class="vnap" style="background:#777700;" onclick="vaihda_vari('#777700')">
-        <input type="button" class="vnap" style="background:#006600;" onclick="vaihda_vari('#006600')">
-        <input type="button" class="vnap" style="background:#007777;" onclick="vaihda_vari('#007777')">
-        <input type="button" class="vnap" style="background:#000088;" onclick="vaihda_vari('#000088')">
-        <input type="button" class="vnap" style="background:#880088;" onclick="vaihda_vari('#880088')">
-        <input type="button" class="vnap" style="background:#FF80AA;" onclick="vaihda_vari('#FF80AA')">
-        <input type="button" class="vnap" style="background:#9EFABE;" onclick="vaihda_vari('#9EFABE')">
-        <input type="button" class="vnap" style="background:#24E08F;" onclick="vaihda_vari('#24E08F')">
-        <input type="button" class="vnap" style="background:#10C9E5;" onclick="vaihda_vari('#10C9E5')">
-        <input type="button" class="vnap" style="background:#C6C6FF;" onclick="vaihda_vari('#C6C6FF')">
-        <input type="button" class="vnap" style="background:#E79FF7;" onclick="vaihda_vari('#E79FF7')">
-        <input type="button" class="vnap" style="background:#663300;" onclick="vaihda_vari('#663300')">
-        <input type="button" class="vnap" style="background:#EC7600;" onclick="vaihda_vari('#EC7600')">
-        <input type="button" class="vnap" style="background:#FF8C1A;" onclick="vaihda_vari('#FF8C1A')">
-        <input type="button" class="vnap" style="background:#FBCD42;" onclick="vaihda_vari('#FBCD42')">
-        <input type="button" class="vnap" style="background:#FFBE9F;" onclick="vaihda_vari('#FFBE9F')">
-        <input type="button" class="vnap" style="background:#FFD9B3;" onclick="vaihda_vari('#FFD9B3')">
-      </div>
-    </div>
+    <color-palette id="paletti" value="#000" colors="drawing"></color-palette>
+    <input type="button" class="button_l" value="Undo" onclick="socket.emit('command', 'undo')">
+    <input type="button" class="button_l" value="Clear" onclick="socket.emit('command', 'clear')">
+    <input type="button" class="button_l" value="Save" onclick="downloadCanvas()">
     <div id="userlist">
       Userlist
       <table id="users" style="width:100%">
@@ -96,12 +63,5 @@
     <input type="text" id="nick" value="anon"><input id="msg" autocomplete="off" /><button id="chatsend">Send</button>
   </form>
 </div>
-
-<!--
-After everything is loaded get the javascript,
-this way there should be no errors
--->
-<script src="draw.js"></script>
-
 </body>
 </html>

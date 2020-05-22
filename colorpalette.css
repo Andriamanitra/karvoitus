@@ -1,0 +1,28 @@
+.current-color {
+  margin: 10px;
+  padding: 1.2em;
+  border: 1px solid #aaa;
+}
+.clickable:hover {
+  cursor: pointer;
+  box-shadow: 0px 0px 4px 2px #aaaaaaaa;
+}
+.clickable:active {
+  box-shadow: none;
+}
+.color {
+  flex: 1;
+  padding: 1em;
+  max-height: 0px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.6);
+  margin: 2px;
+  flex-grow: 0;
+}
+.color-wrapper {
+  display: flex;
+  place-content: start;
+  flex-wrap: wrap;
+  padding: 10px;
+  overflow: auto;
+}
