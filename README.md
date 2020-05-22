@@ -26,3 +26,4 @@ Work in progress...
   * look into context save & restore
   * piirtohommat voisi varmasti jäsennellä fiksumminkin
   * nimeä funktiot ja muuttujat loogisemmin ja kommentoi coodi
+* kirjota koko roska uusiks (crystal-lang + kemal?) ja koita tällä kertaa jaotella ees VÄHÄN toiminnallisuutta eri tiedostoihin/moduleihin
